@@ -5,7 +5,7 @@ var app = express();
 var fs = require("fs");
 var mysql = require('mysql');
 // set to your port
-var port = 9002
+var port = 9013
 app.use(express.static('public'));
 //Serve up web page as the default
 app.get('/', function (req, res) {
@@ -16,9 +16,9 @@ function openSQL() {
     // Login to MySQL
     var con = mysql.createConnection({
     	host: "localhost",
-    	user: "test",
-    	password: "KenyonTest2020",
-    	database: "test"
+    	user: "lu1",
+    	password: "S219054",
+    	database: "lu1"
         });
         con.connect(function(err) {
             if (err) throw err;

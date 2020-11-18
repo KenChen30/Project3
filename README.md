@@ -1,2 +1,6 @@
-# Project3
-Group Members: Ken Chen, Takashi Kanazawa, Lucas Lu, Josh Jones
+# PhoneBookNode
+You must include the following modules on the server
+From the directory: 
+  npm install mysql
+  mpn install socket.io
+# PhoneNodeREST
