@@ -1,0 +1,25 @@
+{
+  "name": "phonenoderest",
+  "version": "1.0.0",
+  "description": "You must include the following modules on the server From the directory:    npm install mysql   mpn install socket.io",
+  "main": "PhoneBookServer.js",
+  "dependencies": {
+    "mysql": "^2.18.1",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node PhoneBookServer.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jimskon/PhoneBookNode.git"
+  },
+  "keywords": [],
+  "author": "Jim Skon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jimskon/PhoneBookNode/issues"
+  },
+  "homepage": "https://github.com/jimskon/PhoneBookNode#readme"
+}
