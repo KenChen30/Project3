@@ -9,6 +9,9 @@ var rows;
 var saveRecord; // Place to store record for add varification
 // Set up events when page is ready
 $(document).ready(function () {
+
+    $("#modalLRForm").modal('show');
+
     // For this program is will be a reponse to a request from this page for an action
 
     operation = "Username"; // Default operation
