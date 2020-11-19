@@ -16,8 +16,8 @@ function openSQL() {
     // Login to MySQL
     var con = mysql.createConnection({
     	host: "localhost",
-    	user: "lu1",
-    	password: "S219054",
+    	user: "kanazawa1",
+    	password: "S218044",
     	database: "TeamA"
         });
         con.connect(function(err) {
@@ -30,7 +30,7 @@ var con = openSQL();
 
 app.get('/list', function (req, res) {
     // Get a list of all records
-    query = "SELECT * FROM PhoneBook";
+    query = "SELECT * FROM UserInformation";
     con.query(query, function(err,result,fields) {
 	     if (err) throw err;
 	     console.log(result)
@@ -49,7 +49,7 @@ app.get('/find', function (req, res) {
     	search=req.query.search;
     	console.log(field+":"+search);
 
-	query = "SELECT * FROM PhoneBook WHERE "+field + "  like '%"+req.query.search+"%'";
+	query = "SELECT * FROM UserInformation WHERE "+field + "  like '%"+req.query.search+"%'";
 	console.log(query);
 	con.query(query, function(err,result,fields) {
 	    if (err) throw err;
@@ -60,7 +60,7 @@ app.get('/find', function (req, res) {
 })
 
 function missingField(p) {
-    return (p.First === undefined || p.Last === undefined || p.Phone === undefined || p.Type === undefined);
+    return (p.Username === undefined || p.Password === undefined || p.Bio === undefined );
 }
 
 app.get('/update', function (req, res) {
@@ -69,7 +69,7 @@ app.get('/update', function (req, res) {
         console.log("Bad update request:"+JSON.stringify(req.query));
         res.end("['fail']");
     } else {
-	query = "UPDATE PhoneBook SET First='"+req.query.First+"', Last='"+req.query.Last+"', Phone='"+req.query.Phone+"', Type ='"+req.query.Type+"' WHERE ID='"+req.query.ID+"'";
+	query = "UPDATE UserInformation SET Username='"+req.query.Username+"', Password='"+req.query.Password+"', Bio='"+req.query.Bio+"' WHERE ID='"+req.query.ID+"'";
  	console.log(query);
 	con.query(query, function(err,result,fields) {
 	    if (err) throw err;
@@ -85,7 +85,7 @@ app.get('/addrec', function (req, res) {
         console.log("Bad add request:"+JSON.stringify(req.query));
         res.end("['fail']");
     } else {
-	query = "Insert INTO PhoneBook(First, Last, Phone, Type)  VALUES('"+req.query.First+"','"+req.query.Last+"','"+req.query.Phone+"','"+req.query.Type+"')";
+	query = "Insert INTO UserInformation(Username, Password, Bio)  VALUES('"+req.query.Username+"','"+req.query.Password+"','"+req.query.Bio+"')";
  	console.log(query);
 	con.query(query, function(err,result,fields) {
 	    if (err) throw err;
@@ -103,7 +103,7 @@ app.delete('/delete', function (req, res) {
     	console.log("Not a value record id to delete!");
     	res.end("['failure']");
     } else {
-	query = "DELETE FROM PhoneBook WHERE ID='"+recid+"'";
+	query = "DELETE FROM UserInformation WHERE ID='"+recid+"'";
         console.log(query);
         con.query(query, function(err,result,fields) {
             if (err) throw err;
@@ -120,7 +120,7 @@ app.get('/:id', function (req, res) {
     	console.log("Bad id lookup: "+req.params.id);
     	res.end('[]');
     } else {
-    	query = "SELECT * FROM PhoneBook WHERE ID = "+ req.params.id;
+    	query = "SELECT * FROM UserInformation WHERE ID = "+ req.params.id;
     	console.log(query);
     	con.query(query, function(err,result,fields) {
     	    if (err) throw err;
