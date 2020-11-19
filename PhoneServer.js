@@ -18,7 +18,7 @@ function openSQL() {
     	host: "localhost",
     	user: "lu1",
     	password: "S219054",
-    	database: "lu1"
+    	database: "TeamA"
         });
         con.connect(function(err) {
             if (err) throw err;
