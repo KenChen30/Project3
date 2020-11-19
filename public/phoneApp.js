@@ -11,7 +11,7 @@ var saveRecord; // Place to store record for add varification
 $(document).ready(function () {
     // For this program is will be a reponse to a request from this page for an action
 
-    operation = "Last"; // Default operation
+    operation = "Username"; // Default operation
 
     // Clear everything on startup
     $('.editdata').hide();
@@ -75,10 +75,10 @@ function buildTable(data) {
     if (rows.length < 1) {
 	return "<h3>Nothing Found</h3>";
     } else {
-	var result = '<table class="w3-table-all w3-hoverable" border="2"><tr><th>First</th><th>Last</th><th>Phone</th><th>Type</th><th>Action</th><tr>';
+	var result = '<table class="w3-table-all w3-hoverable" border="2"><tr><th>Username</th><th>Password</th><th>Bio</th><th>Action</th><tr>';
 	var i=0
 	rows.forEach(function(row) {
-	    result += "<tr><td class='first'>"+row.First+"</td><td class='last'>"+row.Last+"</td><td class='phone'>"+row.Phone+"</td><td class='type'>"+row.Type+"</td>";
+	    result += "<tr><td class='username'>"+row.Username+"</td><td class='password'>"+row.Password+"</td><td class='bio'>"+row.Bio+"</td>";
 	    result += "<td><button type='button' ID='"+row.ID+"' class='btn btn-primary btn-sm edit'>Edit</button> ";
 	    result += "<button type='button' ID='"+row.ID+"' Index='"+i+"' class='btn btn-primary btn-sm delete'>Delete</button></td></tr>";
 	    i++;
@@ -103,10 +103,10 @@ function processEdit(){
     //console.log("First name of record: "+ $(row).find('.first').text());
     selectid=$(this).attr('ID');
 
-    $('#editfirst').val( $(row).find('.first').text());
-    $('#editlast').val( $(row).find('.last').text());
-    $('#editphone').val( $(row).find('.phone').text());
-    $('#edittype').val( $(row).find('.type').text());
+    $('#editusername').val( $(row).find('.username').text());
+    $('#editpassword').val( $(row).find('.password').text());
+    $('#editbio').val( $(row).find('.bio').text());
+
 }
 // This is called when the "Save" button in the edit form is pressed.
 // It takes the updated data, and the saves "selectid", and sends the record to the server
@@ -114,9 +114,9 @@ function processEdit(){
 function updateEntry(){
     //console.log("Edit: Firstname:" + $('#editfirst').val() + "ID:" + selectid);
     $('#searchresults').empty();
-    recAdded = $('#editfirst').val()+' '+$('#editlast').val()+', '+$('#editphone').val()+', '+$('#edittype').val();
+    recAdded = $('#editusername').val()+' '+$('#editpassword').val()+', '+$('#editbio').val();
     $.ajax({
-        url: Url+'/update?ID='+selectid+'&First='+$('#editfirst').val()+'&Last='+$('#editlast').val()+'&Phone='+$('#editphone').val()+'&Type='+ $('#edittype').val(),
+        url: Url+'/update?ID='+selectid+'&Username='+$('#editusername').val()+'&Password='+$('#editpassword').val()+'&Bio='+$('#editbio').val(),
         type:"GET",
         success: processUpdate,
         error: displayError
@@ -150,11 +150,10 @@ function processAdd(results) {
 // It calls the server with the fields they entered.
 function addEntry(){
     $('#searchresults').empty();
-    console.log("Add:"+$('#addlast').val());
-    saveRecord=$('#addfirst').val()+' '+$('#addlast').val()+','+$('#addphone').val()+', '+ $('#\
-addtype').val()
+    console.log("Add:"+$('#addusername').val());
+    saveRecord=$('#addusername').val()+' '+$('#addpassword').val()+','+$('#addbio').val()
     $.ajax({
-        url: Url+'/addrec?First='+$('#addfirst').val()+'&Last='+$('#addlast').val()+'&Phone='+$('#addphone').val()+'&Type='+ $('#addtype').val(),
+        url: Url+'/addrec?Username='+$('#addusername').val()+'&Password='+$('#addpassword').val()+'&Bio='+$('#addbio').val(),
         type:"GET",
         success: processAdd,
         error: displayError
@@ -167,9 +166,9 @@ addtype').val()
 function DeleteConfirm() {
     selectid=$(this).attr('ID');
     recIndex=$(this).attr('index');
-    saveRecord=rows[recIndex].First+" "+rows[recIndex].Last;
+    saveRecord=rows[recIndex].Username+" "+rows[recIndex].Password;
     clearResults();
-    $('#deleteMessage').text("Delete: "+rows[recIndex].First+" "+rows[recIndex].Last+"?");
+    $('#deleteMessage').text("Delete: "+rows[recIndex].Username+" "+rows[recIndex].Password+"?");
     $('#deleteconfirm').modal('show');
 
 }
