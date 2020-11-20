@@ -1,4 +1,4 @@
-// Sample Phone book app using Nodejs, mySql, and REST
+// Sample Art social media app using Nodejs, mySql, and REST
 // Jim Skon, Kenyon, Summer 2020
 var express = require('express');
 var app = express();
@@ -9,7 +9,7 @@ var port = 9018
 app.use(express.static('public'));
 //Serve up web page as the default
 app.get('/', function (req, res) {
-    res.sendFile( __dirname + "/public/" + "phoneApp.html" );
+    res.sendFile( __dirname + "/public/" + "artApp.html" );
 })
 
 function openSQL() {
