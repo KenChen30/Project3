@@ -7,6 +7,8 @@ var selectid;
 var recIndex
 var rows;
 var saveRecord; // Place to store record for add varification
+var loggedIn = false;
+
 // Set up events when page is ready
 $(document).ready(function () {
 
@@ -25,7 +27,7 @@ $(document).ready(function () {
     });
     $("#add-btn").click(addEntry);
     $("#clear").click(clearResults);
-
+    $("#login-btn").click(login);
     //Handle pulldown menu
     $(".dropdown-menu li a").click(function(){
 	$(this).parents(".btn-group").find('.selection').text($(this).text());
@@ -56,7 +58,7 @@ changeOperation(operation);
 
 // This function is called when an option is selected in the pull down menu
 // If the option is "Add New" the shows the add form, and hides the others
-// Otherwise it shows the results div
+// Otherwise it shows the ss div
 function changeOperation(operation){
     if(operation=="New"){
 	$('#addmessage').val("");
@@ -202,6 +204,39 @@ function displayError(error) {
 // Clears the search results area on the screen
 function clearResults() {
     $('#searchresults').empty();
+}
+
+
+function authenticate() {
+  var password = document.getElementById('loginpassword').value;
+  var username = document.getElementById('loginusername').value;
+  loggedIn = login(password,username);
+  status();
+}
+
+function userInfo(){
+
+  $.ajax({
+      url: Url+'/addrec?Username='+$('#addusername').val()+'&Password='+$('#addpassword').val()+'&Bio='+$('#addbio').val(),
+      type:"GET",
+      success: processAdd,
+      error: displayError
+  })
+}
+
+function login(results) {
+    var storedPassword = '123';
+
+
+    return password == storedPassword;
+}
+
+function status() {
+  if(loggedIn) {
+    console.log('You are in :)');
+  } else {
+    console.log('You are not in :(');
+  }
 }
 
 // Called when the user hits the "Search" button.

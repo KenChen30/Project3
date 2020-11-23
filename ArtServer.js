@@ -129,7 +129,26 @@ app.get('/:id', function (req, res) {
 	})
     }
 })
+var user = {};
 
+
+
+app.get('/login', function (req, res) {
+    // Get a record by id
+    query="SELECT Username,Password FROM UserInformation"
+    con.query(query, function(err,result,fields) {
+        if (err) throw err;
+        console.log(result)
+        res.end( JSON.stringify(result));
+        var result = JSON.parse(result);
+        for (var i = 0; i < data.user.length; i++) {
+          user[result.username] = data.user;
+          }
+})
+  }
+
+
+})
 var server = app.listen(port, function () {
    var host = server.address().address
    var port = server.address().port
