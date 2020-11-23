@@ -1,5 +1,5 @@
 // Sample Art social media app using Nodejs, mySql, and REST
-// Jim Skon, Kenyon, Summer 2020
+// Takashi, Lucas, Ken, Joshua, Kenyon, Summer 2020
 var express = require('express');
 var app = express();
 var fs = require("fs");
@@ -135,7 +135,9 @@ var user = {};
 
 app.get('/login', function (req, res) {
     // Get a record by id
-    query="SELECT Username,Password FROM UserInformation"
+    recusername=req.query.Username;
+    recpassword=req.query.Password;
+    query="SELECT * FROM UserInformation WHERE Username = '"+recusername+"' AND Password = '"+recpassword+"'";
     con.query(query, function(err,result,fields) {
         if (err) throw err;
         console.log(result)
