@@ -4,13 +4,25 @@ var express = require('express');
 var app = express();
 var fs = require("fs");
 var mysql = require('mysql');
+var session = require('express-session');
+var bodyParser = require('body-parser');
 // set to your port
 var port = 9018
 app.use(express.static('public'));
 //Serve up web page as the default
 app.get('/', function (req, res) {
-    res.sendFile( __dirname + "/public/" + "artApp.html" );
+    res.sendFile(path.join( __dirname + "/public/" + "artApp.html" ));
 })
+
+app.use(bodyParser.urlencoded({extended : true}));
+app.use(bodyParser.json());
+
+var app = express();
+app.use(session({
+	secret: 'secret',
+	resave: true,
+	saveUninitialized: true
+}));
 
 function openSQL() {
     // Login to MySQL
@@ -134,23 +146,39 @@ var user = {};
 
 
 app.get('/login', function (req, res) {
-    // Get a record by id
+    // Log in function
     recusername=req.query.Username;
     recpassword=req.query.Password;
-    query="SELECT * FROM UserInformation WHERE Username = '"+recusername+"' AND Password = '"+recpassword+"'";
-    con.query(query, function(err,result,fields) {
-        if (err) throw err;
-        console.log(result)
-        res.end( JSON.stringify(result));
-        var result = JSON.parse(result);
-        for (var i = 0; i < data.user.length; i++) {
-          user[result.username] = data.user;
-          }
+    if (username && password) {
+      query="SELECT * FROM UserInformation WHERE Username = '"+recusername+"' AND Password = '"+recpassword+"'";
+      con.query(query, function(err,result,fields) {
+        if (results.length > 0) {
+  				request.session.loggedin = true;
+  				request.session.username = username;
+  				response.redirect('/home');
+  			} else {
+  				response.send('Incorrect Username and/or Password!');
+  			}
+  			response.end();
+  		});
+  	} else {
+  		response.send('Please enter Username and Password!');
+  		response.end();
+  	}
+
 })
-  }
 
 
-})
+app.get('/home', function(request, response) {
+	if (request.session.loggedin) {
+		response.send('Welcome back, ' + request.session.username + '!');
+	} else {
+		response.send('Please login to view this page!');
+	}
+	response.end();
+});
+
+app.listen(3000);
 var server = app.listen(port, function () {
    var host = server.address().address
    var port = server.address().port
