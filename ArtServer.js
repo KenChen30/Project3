@@ -6,18 +6,20 @@ var fs = require("fs");
 var mysql = require('mysql');
 var session = require('express-session');
 var bodyParser = require('body-parser');
+var path = require('path');
+
 // set to your port
 var port = 9018
-app.use(express.static('public'));
+app.use(express.static('/public'));
 //Serve up web page as the default
 app.get('/', function (req, res) {
-    res.sendFile(path.join( __dirname + "/public/" + "artApp.html" ));
+    res.sendFile( __dirname + "/public/" + "artApp.html" );
 })
 
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
 
-var app = express();
+
 app.use(session({
 	secret: 'secret',
 	resave: true,
@@ -145,37 +147,38 @@ var user = {};
 
 
 
-app.get('/login', function (req, res) {
+app.post('/auth', function (req, res) {
     // Log in function
     recusername=req.query.Username;
     recpassword=req.query.Password;
-    if (username && password) {
+    if (recusername && recpassword) {
       query="SELECT * FROM UserInformation WHERE Username = '"+recusername+"' AND Password = '"+recpassword+"'";
       con.query(query, function(err,result,fields) {
         if (results.length > 0) {
-  				request.session.loggedin = true;
-  				request.session.username = username;
-  				response.redirect('/home');
+  				req.session.Loggedin = true;
+  				req.session.Username = recusername;
+  				res.redirect('/home');
   			} else {
-  				response.send('Incorrect Username and/or Password!');
+  				res.send('Incorrect Username and/or Password!');
   			}
-  			response.end();
+  			res.end();
   		});
+
   	} else {
-  		response.send('Please enter Username and Password!');
-  		response.end();
+  		res.send('Please enter Username and Password!');
+  		res.end();
   	}
 
 })
 
 
-app.get('/home', function(request, response) {
-	if (request.session.loggedin) {
-		response.send('Welcome back, ' + request.session.username + '!');
+app.get('/home', function(req, res) {
+	if (req.session.Loggedin === true) {
+		res.send('Welcome back, ' + req.session.Username + '!');
 	} else {
-		response.send('Please login to view this page!');
+		res.send('Please login to view this page!');
 	}
-	response.end();
+	res.end();
 });
 
 app.listen(3000);
