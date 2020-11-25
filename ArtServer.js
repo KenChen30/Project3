@@ -143,7 +143,7 @@ app.get('/:id', function (req, res) {
 	})
     }
 })
-var user = {};
+
 
 
 
@@ -151,11 +151,15 @@ app.post('/auth', function (req, res) {
     // Log in function
     recusername=req.query.Username;
     recpassword=req.query.Password;
+    console.log(recusername)
+    console.log(recpassword)
     if (recusername && recpassword) {
       query="SELECT * FROM UserInformation WHERE Username = '"+recusername+"' AND Password = '"+recpassword+"'";
+      console.log(query)
       con.query(query, function(err,result,fields) {
+
         if (results.length > 0) {
-  				req.session.Loggedin = true;
+  				req.session.loggedIn = true;
   				req.session.Username = recusername;
   				res.redirect('/home');
   			} else {
@@ -173,7 +177,7 @@ app.post('/auth', function (req, res) {
 
 
 app.get('/home', function(req, res) {
-	if (req.session.Loggedin === true) {
+	if (req.session.loggedIn === true) {
 		res.send('Welcome back, ' + req.session.Username + '!');
 	} else {
 		res.send('Please login to view this page!');
