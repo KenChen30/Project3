@@ -16,7 +16,7 @@ $(document).ready(function () {
 
     // For this program is will be a reponse to a request from this page for an action
 
-    operation = "Username"; // Default operation
+    operation = "Author"; // Default operation
 
     // Clear everything on startup
     $('.editdata').hide();
@@ -50,8 +50,6 @@ function processResults(results) {
     //console.log("Results:"+results);
     $('#searchresults').empty();
     $('#searchresults').append(buildTable(results));
-    $(".edit").click(processEdit);
-    $(".delete").click(DeleteConfirm);
 
 }
 
@@ -80,12 +78,10 @@ function buildTable(data) {
     if (rows.length < 1) {
 	return "<h3>Nothing Found</h3>";
     } else {
-	var result = '<table class="w3-table-all w3-hoverable" border="2"><tr><th>Username</th><th>Password</th><th>Bio</th><th>Action</th><tr>';
+	var result = '<table class="w3-table-all w3-hoverable" border="2"><tr><th>Author</th><th>Title</th><th>Date</th><th>Action</th><tr>';
 	var i=0
 	rows.forEach(function(row) {
-	    result += "<tr><td class='username'>"+row.Username+"</td><td class='password'>"+row.Password+"</td><td class='bio'>"+row.Bio+"</td>";
-	    result += "<td><button type='button' ID='"+row.ID+"' class='btn btn-primary btn-sm edit'>Edit</button> ";
-	    result += "<button type='button' ID='"+row.ID+"' Index='"+i+"' class='btn btn-primary btn-sm delete'>Delete</button></td></tr>";
+	    result += "<tr><td class='author'>"+row.Author+"</td><td class='title'>"+row.Title+"</td><td class='date'>"+row.Date+"</td>";
 	    i++;
 	})
 	result += "</table>";
@@ -99,34 +95,11 @@ function buildTable(data) {
 // Since this is a result of a button click, we look up the 'ID' of '$(this)' to get the ID of the record to edit
 // The record ID is then saved in selectID so we know which record to update with the save button is pushed
 // We fill in the edit form with the data from the record from this row.
-function processEdit(){
-    $('#searchresults').empty();
-    $('.editdata').show();
-    $("#edit-btn").click(updateEntry);
-    console.log("Edit Record: " + $(this).attr('ID'));
-    var row=$(this).parents("tr");
-    //console.log("First name of record: "+ $(row).find('.first').text());
-    selectid=$(this).attr('ID');
 
-    $('#editusername').val( $(row).find('.username').text());
-    $('#editpassword').val( $(row).find('.password').text());
-    $('#editbio').val( $(row).find('.bio').text());
-
-}
 // This is called when the "Save" button in the edit form is pressed.
 // It takes the updated data, and the saves "selectid", and sends the record to the server
 // ot update the database.
-function updateEntry(){
-    //console.log("Edit: Firstname:" + $('#editfirst').val() + "ID:" + selectid);
-    $('#searchresults').empty();
-    recAdded = $('#editusername').val()+' '+$('#editpassword').val()+', '+$('#editbio').val();
-    $.ajax({
-        url: Url+'/update?ID='+selectid+'&Username='+$('#editusername').val()+'&Password='+$('#editpassword').val()+'&Bio='+$('#editbio').val(),
-        type:"GET",
-        success: processUpdate,
-        error: displayError
-    })
-}
+
 
 // Process a completed update process
 function processUpdate(results) {
@@ -168,15 +141,8 @@ function addEntry(){
 // This is called when the user clicks on a "Delete" button on a row matches from a search.
 // It puts up a modal asking the user to confirm if they really want to delete this record.  If they
 // hit "Delete record", the processDelete function is called to do the delete.
-function DeleteConfirm() {
-    selectid=$(this).attr('ID');
-    recIndex=$(this).attr('index');
-    saveRecord=rows[recIndex].Username+" "+rows[recIndex].Password;
-    clearResults();
-    $('#deleteMessage').text("Delete: "+rows[recIndex].Username+" "+rows[recIndex].Password+"?");
-    $('#deleteconfirm').modal('show');
 
-}
+
 // Calls the server with a recordID of a row to delete
 function processDelete(){
     var id=$(this).attr('ID');

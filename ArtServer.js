@@ -42,9 +42,30 @@ function openSQL() {
 
 var con = openSQL();
 
+function missingField(p) {
+    return (p.Username === undefined || p.Password === undefined || p.Bio === undefined );
+}
+
+app.get('/addrec', function (req, res) {
+    // update a record by id
+    if (missingField(req.query)) {
+        console.log("Bad add request:"+JSON.stringify(req.query));
+        res.end("['fail']");
+    } else {
+	query = "Insert INTO UserInformation(Username, Password, Bio)  VALUES('"+req.query.Username+"','"+req.query.Password+"','"+req.query.Bio+"')";
+ 	console.log(query);
+	con.query(query, function(err,result,fields) {
+	    if (err) throw err;
+	    console.log(result)
+	    res.end( JSON.stringify(result));
+	})
+    }
+})
+
+// Section for Art Search
 app.get('/list', function (req, res) {
     // Get a list of all records
-    query = "SELECT * FROM UserInformation";
+    query = "SELECT * FROM art";
     con.query(query, function(err,result,fields) {
 	     if (err) throw err;
 	     console.log(result)
@@ -63,68 +84,13 @@ app.get('/find', function (req, res) {
     	search=req.query.search;
     	console.log(field+":"+search);
 
-	query = "SELECT * FROM UserInformation WHERE "+field + "  like '%"+req.query.search+"%'";
+	query = "SELECT * FROM art WHERE "+field + "  like '%"+req.query.search+"%'";
 	console.log(query);
 	con.query(query, function(err,result,fields) {
 	    if (err) throw err;
 	    console.log(result)
 	    res.end( JSON.stringify(result));
 	})
-    }
-})
-
-function missingField(p) {
-    return (p.Username === undefined || p.Password === undefined || p.Bio === undefined );
-}
-
-app.get('/update', function (req, res) {
-    // update a record by id
-    if (missingField(req.query) || req.query.ID === undefined) {
-        console.log("Bad update request:"+JSON.stringify(req.query));
-        res.end("['fail']");
-    } else {
-	query = "UPDATE UserInformation SET Username='"+req.query.Username+"', Password='"+req.query.Password+"', Bio='"+req.query.Bio+"' WHERE ID='"+req.query.ID+"'";
- 	console.log(query);
-	con.query(query, function(err,result,fields) {
-	    if (err) throw err;
-	    console.log(result)
-	    res.end( JSON.stringify(result));
-	})
-    }
-})
-
-app.get('/addrec', function (req, res) {
-    // update a record by id
-    if (missingField(req.query)) {
-        console.log("Bad add request:"+JSON.stringify(req.query));
-        res.end("['fail']");
-    } else {
-	query = "Insert INTO UserInformation(Username, Password, Bio)  VALUES('"+req.query.Username+"','"+req.query.Password+"','"+req.query.Bio+"')";
- 	console.log(query);
-	con.query(query, function(err,result,fields) {
-	    if (err) throw err;
-	    console.log(result)
-	    res.end( JSON.stringify(result));
-	})
-    }
-})
-
-app.delete('/delete', function (req, res) {
-    console.log("Delete!");
-    console.log("Params:"+JSON.stringify(req.query));
-    recid=req.query.ID;
-    if (recid === undefined || isNaN(recid)) {
-    	console.log("Not a value record id to delete!");
-    	res.end("['failure']");
-    } else {
-	query = "DELETE FROM UserInformation WHERE ID='"+recid+"'";
-        console.log(query);
-        con.query(query, function(err,result,fields) {
-            if (err) throw err;
-            console.log(result)
-            res.end( JSON.stringify(result));
-        })
-
     }
 })
 
@@ -143,8 +109,6 @@ app.get('/:id', function (req, res) {
 	})
     }
 })
-
-
 
 
 app.get('/auth', function (req, res) {
@@ -176,14 +140,14 @@ app.get('/auth', function (req, res) {
 })
 
 
-app.get('/home', function(req, res) {
-	if (req.session.loggedIn === true) {
-		res.send('Welcome back, ' + req.session.Username + '!');
-	} else {
-		res.send('Please login to view this page!');
-	}
-	res.end();
-});
+// app.get('/home', function(req, res) {
+// 	if (req.session.loggedIn === true) {
+// 		res.send('Welcome back, ' + req.session.Username + '!');
+// 	} else {
+// 		res.send('Please login to view this page!');
+// 	}
+// 	res.end();
+// });
 
 
 var server = app.listen(port, function () {
