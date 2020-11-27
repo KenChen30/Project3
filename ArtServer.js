@@ -10,7 +10,7 @@ var path = require('path');
 
 // set to your port
 var port = 9018
-app.use(express.static('/public'));
+app.use(express.static(path.join(__dirname+'/public')));
 //Serve up web page as the default
 app.get('/', function (req, res) {
     res.sendFile( __dirname + "/public/" + "artApp.html" );
@@ -147,7 +147,7 @@ app.get('/:id', function (req, res) {
 
 
 
-app.post('/auth', function (req, res) {
+app.get('/auth', function (req, res) {
     // Log in function
     recusername=req.query.Username;
     recpassword=req.query.Password;
@@ -162,13 +162,13 @@ app.post('/auth', function (req, res) {
   				req.session.loggedIn = true;
   				req.session.Username = recusername;
   				res.redirect('/home');
-  			} else {
+  		} else {
   				res.send('Incorrect Username and/or Password!');
   			}
   			res.end();
   		});
 
-  	} else {
+  	}else {
   		res.send('Please enter Username and Password!');
   		res.end();
   	}
@@ -185,7 +185,7 @@ app.get('/home', function(req, res) {
 	res.end();
 });
 
-app.listen(3000);
+
 var server = app.listen(port, function () {
    var host = server.address().address
    var port = server.address().port

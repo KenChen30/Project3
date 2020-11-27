@@ -54,7 +54,7 @@ function processResults(results) {
     $(".delete").click(DeleteConfirm);
 
 }
-changeOperation(operation);
+
 
 // This function is called when an option is selected in the pull down menu
 // If the option is "Add New" the shows the add form, and hides the others
@@ -207,12 +207,12 @@ function clearResults() {
 }
 
 
-function authenticate() {
-  var password = document.getElementById('loginpassword').value;
-  var username = document.getElementById('loginusername').value;
-  loggedIn = login(password,username);
-  status();
-}
+// function authenticate() {
+//   var password = document.getElementById('loginpassword').value;
+//   var username = document.getElementById('loginusername').value;
+//   loggedIn = login(password,username);
+//   status();
+// }
 
 function userInfo(){
 
@@ -225,23 +225,44 @@ function userInfo(){
 }
 
 function login(results) {
-    var storedPassword = '123';
+  $.ajax({
+      url: Url+'/auth?Username='+$('#loginusername').val()+'&Password='+$('#loginpassword').val(),
+      type:"GET",
+      success: processLogin,
+      error: displayError
+  })
 
-
-    return password == storedPassword;
 }
 
-function status() {
-  if(loggedIn) {
-    console.log('You are in :)');
-  } else {
-    console.log('You are not in :(');
-  }
+function processLogin(results) {
+    // Logged in and tell them their logged in
+    console.log("Login Success");
+    loggedIn===True;
+    console.log(loggedIn)
+
 }
+
+// function homepage(){
+//   $('.editdata').hide();
+//   $.ajax({
+//       url: Url+'/home?',
+//       type:"GET",
+//       success: processResults,
+//       error: displayError
+//   })
+// }
+// function status() {
+//   if(loggedIn) {
+//     console.log('You are in :)');
+//   } else {
+//     console.log('You are not in :(');
+//   }
+// }
 
 // Called when the user hits the "Search" button.
 // It sends a request to the server (operation,search string),
 // Where operation is one of (Last, First, Type)
+
 function getMatches(){
     $('.editdata').hide();
     var search = $('#search').val();
