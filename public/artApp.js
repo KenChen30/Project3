@@ -78,10 +78,10 @@ function buildTable(data) {
     if (rows.length < 1) {
 	return "<h3>Nothing Found</h3>";
     } else {
-	var result = '<table class="w3-table-all w3-hoverable" border="2"><tr><th>Author</th><th>Title</th><th>Date</th><th>Action</th><tr>';
+	var result = '<table class="w3-table-all w3-hoverable" border="2"><tr><th>Author</th><th>Title</th><th>Date</th><th>Image</th><tr>';
 	var i=0
 	rows.forEach(function(row) {
-	    result += "<tr><td class='author'>"+row.Author+"</td><td class='title'>"+row.Title+"</td><td class='date'>"+row.Date+"</td>";
+	    result += "<tr><td class='author'>"+row.Author+"</td><td class='title'>"+row.Title+"</td><td class='date'>"+row.Date+"</td><td><button onclick=\"showInfo('myButton"+i+"')\">Show Image</button><div id=\"myButton"+i+"\" style=\"display:none;\"><img src="+row.IMGURL+" width='300' height='300'></div></td>";
 	    i++;
 	})
 	result += "</table>";
@@ -89,6 +89,16 @@ function buildTable(data) {
 	return result;
     }
 }
+
+function showInfo(myButton) {
+  var x = document.getElementById(myButton);
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+
 // Called when the user clicks on the Edit button on the results list from a search
 // This clears the search  results and shows the edit form, filling it in with the data from the associated record.
 // We get the "row" node for $(this) so we have the tight record to edit
