@@ -84,8 +84,14 @@ function buildTable(data) {
 	var result = '<table class="w3-table-all w3-hoverable" border="2"><tr><th>Author</th><th>Title</th><th>Date</th><th>Image</th><th>Hide</th><tr>';
 	var i=0
 	rows.forEach(function(row) {
-	    result += "<tr><td class='author'>"+row.Author+"</td><td class='title'>"+row.Title+"</td><td class='date'>"+row.Date+"</td><td><button onclick=\"showInfo('myButton"+i+"')\">Show Image</button><div id=\"myButton"+i+"\" style=\"display:none;\"><img src="+row.IMGURL+" width='300' height='300'></div></td><td><button type=\"button\" class=\"btn btn-primary\" data-toggle=\"modal\" data-target=\"#myModal\">Open modal</button></td>";
-	    i++;
+	    result += "<tr><td class='author'>"+row.Author+"</td><td class='title'>"+row.Title+"</td><td class='date'>"+row.Date+"</td><td><button onclick=\"showInfo('myButton"+i+"')\">Show Image</button><div id=\"myButton"+i+"\" style=\"display:none;\"><img src="+row.IMGURL+" width='300' height='300'></div></td><td><button type=\"button\" class=\"btn btn-primary\" data-toggle=\"modal\" data-target=\"#myModal\">Open Art Page</button></td>";
+      result += "<div class=\"modal fade\" id=\"myModal\"><div class=\"modal-dialog modal-lg\">";
+      result += "<div class=\"modal-content\"><div class=\"modal-header\"><h4 class=\"modal-title\">Modal Heading"+i+"</h4>";
+      result += "<button type=\"button\" class=\"close\" data-dismiss=\"modal\">x</button></div><div class=\"modal-body\"><button onclick=\"showPostModal('myPost"+i+"')\">Show Image</button><div id=\"myPost"+i+"\" style=\"display:none;\"><img src="+row.IMGURL+" width='300' height='300'></div>";
+      result += "<div id=\"postpage\"></div></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button></div></div></div></div>";
+
+
+      i++;
 	})
 	result += "</table>";
 
@@ -98,7 +104,7 @@ function buildTable(data) {
 //
 function buildPostPage(artRow) {
 	var result;
-  result += "<div id=\"myButton"+i+"\" style=\"display:none;\"><img src="+row.IMGURL+" width='300' height='300'></div>";
+  result += 1;
 
 	return result;
 }
@@ -113,6 +119,15 @@ document.getElementById('searchresults').style.visibility = "visible";
 
 function showInfo(myButton) {
   var x = document.getElementById(myButton);
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+
+function showPostModal(myPost) {
+  var x = document.getElementById(myPost);
   if (x.style.display === "none") {
     x.style.display = "block";
   } else {
