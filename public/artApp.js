@@ -84,7 +84,7 @@ function buildTable(data) {
 	var result = '<table class="w3-table-all w3-hoverable" border="2"><tr><th>Author</th><th>Title</th><th>Date</th><th>Image</th><th>Hide</th><tr>';
 	var i=0
 	rows.forEach(function(row) {
-	    result += "<tr><td class='author'>"+row.Author+"</td><td class='title'>"+row.Title+"</td><td class='date'>"+row.Date+"</td><td><button onclick=\"showInfo('myButton"+i+"')\">Show Image</button><div id=\"myButton"+i+"\" style=\"display:none;\"><img src="+row.IMGURL+" width='300' height='300'></div></td><td><button onclick=\"hideTable()\">Hide Table</button></td>";
+	    result += "<tr><td class='author'>"+row.Author+"</td><td class='title'>"+row.Title+"</td><td class='date'>"+row.Date+"</td><td><button onclick=\"showInfo('myButton"+i+"')\">Show Image</button><div id=\"myButton"+i+"\" style=\"display:none;\"><img src="+row.IMGURL+" width='300' height='300'></div></td><td><button type=\"button\" class=\"btn btn-primary\" data-toggle=\"modal\" data-target=\"#myModal\">Open modal</button></td>";
 	    i++;
 	})
 	result += "</table>";
@@ -92,7 +92,9 @@ function buildTable(data) {
 	return result;
     }
 }
-
+//
+//<button onclick=\"hideTable()\">Hide Table</button>
+//<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Open modal</button>
 //
 function buildPostPage(artRow) {
 	var result;
