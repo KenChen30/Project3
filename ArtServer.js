@@ -84,7 +84,7 @@ app.get('/find', function (req, res) {
     	search=req.query.search;
     	console.log(field+":"+search);
 
-	query = "SELECT * FROM art WHERE "+field + "  like '%"+req.query.search+"%'";
+	query = "SELECT * FROM art WHERE "+field+" like '%"+req.query.search+"%' limit 20";
 	console.log(query);
 	con.query(query, function(err,result,fields) {
 	    if (err) throw err;
