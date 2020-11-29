@@ -82,12 +82,13 @@ function buildTable(data) {
 	return "<h3>Nothing Found</h3>";
     } else {
 	var result = '<table class="w3-table-all w3-hoverable" border="2"><tr><th>Author</th><th>Title</th><th>Date</th><th>Image</th><th>Hide</th><tr>';
-	var i=0
+	var i=0;
 	rows.forEach(function(row) {
-	    result += "<tr><td class='author'>"+row.Author+"</td><td class='title'>"+row.Title+"</td><td class='date'>"+row.Date+"</td><td><button onclick=\"showInfo('myButton"+i+"')\">Show Image</button><div id=\"myButton"+i+"\" style=\"display:none;\"><img src="+row.IMGURL+" width='300' height='300'></div></td><td><button type=\"button\" class=\"btn btn-primary\" data-toggle=\"modal\" data-target=\"#myModal\">Open Art Page</button></td>";
-      result += "<div class=\"modal fade\" id=\"myModal\"><div class=\"modal-dialog modal-lg\">";
-      result += "<div class=\"modal-content\"><div class=\"modal-header\"><h4 class=\"modal-title\">Modal Heading"+i+"</h4>";
-      result += "<button type=\"button\" class=\"close\" data-dismiss=\"modal\">x</button></div><div class=\"modal-body\"><button onclick=\"showPostModal('myPost"+i+"')\">Show Image</button><div id=\"myPost"+i+"\" style=\"display:none;\"><img src="+row.IMGURL+" width='300' height='300'></div>";
+	    result += "<tr><td class='author'>"+row.Author+"</td><td class='title'>"+row.Title+"</td><td class='date'>"+row.Date+"</td><td><button onclick=\"showInfo('myButton"+i+"')\">Show Image</button><div id=\"myButton"+i+"\" style=\"display:none;\"><img src="+row.IMGURL+" width='300' height='300'></div></td><td><button onclick=\"showPostModal('myPost"+i+"')\" data-toggle=\"modal\" data-target=\"#myPost"+i+"\">Open Art Page</button></td>";
+      // if we add class=\"modal fade\" in the div below the button cannot function, and if we delete the class=\"modal fade\", the close button for the modal will not work.
+      result += "<div class=\"modal\" id=\"myPost"+i+"\" style=\"display:none;\"><div class=\"modal-dialog modal-lg\">";
+      result += "<div class=\"modal-content\"><div class=\"modal-header\"><h4 class=\"modal-title\">"+row.Title+"</h4>";
+      // result += "<button type=\"button\" class=\"close\" data-dismiss=\"modal\"></button></div><div class=\"modal-body\"><img src="+row.IMGURL+" width='300' height='300'><div id=\"myComment"+i+"\"></div><div id='loading' style=display:none;></div>";
       result += "<div id=\"postpage\"></div></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button></div></div></div></div>";
 
 
@@ -98,7 +99,28 @@ function buildTable(data) {
 	return result;
     }
 }
+// function getComments(title){
 //
+//   $.ajax({
+//       url: Url+'/listComments?Title='+title,
+//       type:"GET",
+//       success: processComment,
+//       error: displayError
+//   })
+// }
+// function processComment(results){
+//
+//      $('#myComment'+i).append(getComments(row.Title));
+// }
+
+
+
+
+
+
+
+
+
 //<button onclick=\"hideTable()\">Hide Table</button>
 //<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Open modal</button>
 //
@@ -175,7 +197,7 @@ function processAdd(results) {
 function addEntry(){
     $('#searchresults').empty();
     console.log("Add:"+$('#addusername').val());
-    saveRecord=$('#addusername').val()+' '+$('#addpassword').val()+','+$('#addbio').val()
+    saveRecord=$('#addusername').val()+', '+$('#addpassword').val()+', '+$('#addbio').val()
     $.ajax({
         url: Url+'/addrec?Username='+$('#addusername').val()+'&Password='+$('#addpassword').val()+'&Bio='+$('#addbio').val(),
         type:"GET",
