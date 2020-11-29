@@ -13,18 +13,12 @@ var port = 9018
 app.use(express.static(path.join(__dirname+'/public')));
 //Serve up web page as the default
 app.get('/', function (req, res) {
-    res.sendFile( __dirname + "/public/" + "artApp.html" );
+    res.sendFile( __dirname + "/public/" + "login.html" );
 })
 
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
 
-
-app.use(session({
-	secret: 'secret',
-	resave: true,
-	saveUninitialized: true
-}));
 
 function openSQL() {
     // Login to MySQL
@@ -41,6 +35,11 @@ function openSQL() {
 }
 
 var con = openSQL();
+app.use(session({
+	secret: 'secret',
+	resave: true,
+	saveUninitialized: true
+}));
 
 function missingField(p) {
     return (p.Username === undefined || p.Password === undefined || p.Bio === undefined );
@@ -123,43 +122,28 @@ app.get('/:id', function (req, res) {
 })
 
 
-app.get('/auth', function (req, res) {
-    // Log in function
-    recusername=req.query.Username;
-    recpassword=req.query.Password;
-    console.log(recusername)
-    console.log(recpassword)
-    if (recusername && recpassword) {
-      query="SELECT * FROM UserInformation WHERE Username = '"+recusername+"' AND Password = '"+recpassword+"'";
-      console.log(query)
-      con.query(query, function(err,result,fields) {
-
-        if (results.length > 0) {
-  				req.session.loggedIn = true;
-  				req.session.Username = recusername;
-  				res.redirect('/home');
-  		} else {
-  				res.send('Incorrect Username and/or Password!');
-  			}
-  			res.end();
-  		});
-
-  	}else {
-  		res.send('Please enter Username and Password!');
-  		res.end();
-  	}
-
-})
+app.post('/auth', function(req, res) {
+	var username = req.body.username;
+	var password = req.body.password;
+	if (username && password) {
+		con.query('SELECT * FROM UserInformation WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
+			if (results.length > 0) {
+				req.session.loggedin = true;
+				req.session.username = username;
+				res.redirect('/artApp.html');
+			} else {
+				res.send('Incorrect Username and/or Password!');
+			}
+			res.end();
+		});
+	} else {
+		res.send('Please enter Username and Password!');
+		res.end();
+	}
+});
 
 
-// app.get('/home', function(req, res) {
-// 	if (req.session.loggedIn === true) {
-// 		res.send('Welcome back, ' + req.session.Username + '!');
-// 	} else {
-// 		res.send('Please login to view this page!');
-// 	}
-// 	res.end();
-// });
+
 
 
 var server = app.listen(port, function () {

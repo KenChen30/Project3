@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Sample Search Books">
+    <meta name="author" content="Kara Braun and James Skon">
+		<title>Art Social Media Login Form</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+<body>
+	<!--Modal: Login / Register Form-->
+	<div class="modal fade" id="modalLRForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-dialog cascading-modal" role="document">
+	    <!--Content-->
+	    <div class="modal-content">
+
+	      <!--Modal cascading tabs-->
+	      <div class="modal-c-tabs">
+
+	        <!-- Nav tabs -->
+	        <ul class="nav nav-tabs md-tabs tabs-2 light-blue darken-3" role="tablist">
+	          <li class="nav-item">
+	            <a class="nav-link active" data-toggle="tab" href="#panel7" role="tab"><i class="fas fa-user mr-1"></i>
+	              Login</a>
+	          </li>
+	          <li class="nav-item">
+	            <a class="nav-link" data-toggle="tab" href="#panel8" role="tab"><i class="fas fa-user-plus mr-1"></i>
+	              Register</a>
+	          </li>
+	        </ul>
+
+	        <!-- Tab panels -->
+	        <div class="tab-content">
+	          <!--Panel 7-->
+
+	          <div class="tab-pane fade in show active" id="panel7" role="tabpanel">
+
+	            <!--Body-->
+							<div class="modal-body mb-1">
+              <div class="md-form form-sm mb-5">
+                <i class="fas fa-envelope prefix"></i>
+								<form action="auth" method="POST">
+									<input type="text" name="username" placeholder="Username" required>
+									<input type="password" name="password" placeholder="Password" required>
+									<input type="submit">
+								</form>
+
+              </div>
+
+
+            </div>
+
+
+
+
+	            <!-- <div class="modal-body mb-1">
+								<div class="login-form">
+									<i class="fas fa-envelope prefix"></i>
+									<h1>Login Form</h1>
+									<form action="auth" method="POST">
+										<input type="text" name="username" placeholder="Username" required>
+										<input type="password" name="password" placeholder="Password" required>
+										<input type="submit">
+								  </form>
+							    </div>
+	              </div>
+	            </div> -->
+
+	            <!--Footer-->
+							<div class="modal-footer">
+              <div class="options text-center text-md-right mt-1">
+                <p>Not a member? <a href="#" class="blue-text">Sign Up</a></p>
+                <p>Forgot <a href="#" class="blue-text">Password?</a></p>
+              </div>
+              <button type="button" class="btn btn-outline-info waves-effect ml-auto" data-dismiss="modal">Close</button>
+            </div>
+
+	          </div>
+
+
+
+	          <!--/.Panel 7-->
+
+	          <!--Panel 8-->
+	          <div class="tab-pane fade" id="panel8" role="tabpanel">
+
+	            <!--Body-->
+						
+	            <div class="modal-body">
+
+	              <div class="md-form form-sm mb-5">
+	                <i class="fas fa-envelope prefix"></i>
+	                <input type="text" id="addusername" class="form-control form-control-sm validate">
+	                <label data-error="wrong" data-success="right" for="addusername">Username</label>
+	              </div>
+
+	              <div class="md-form form-sm mb-5">
+	                <i class="fas fa-lock prefix"></i>
+	                <input type="password" id="addpassword" class="form-control form-control-sm validate">
+	                <label data-error="wrong" data-success="right" for="addpassword">Password</label>
+	              </div>
+
+	              <div class="md-form form-sm mb-5">
+	                <i class="fas fa-envelope prefix"></i>
+	                <input type="text" id="addbio" class="form-control form-control-sm validate">
+	                <label data-error="wrong" data-success="right" for="addbio">Bio</label>
+	              </div>
+
+	              <div class="text-center form-sm mt-2">
+	                <button type="button" id="add-btn" class="btn btn-info">Sign up<i class="fas fa-sign-in ml-1"></i></button>
+	              </div>
+
+
+						</div>
+	            <!--Footer-->
+	            <div class="modal-footer">
+	              <div class="options text-right">
+	                <p class="pt-1">Already have an account? <a href="#" class="blue-text">Log In</a></p>
+	              </div>
+	              <button type="button" class="btn btn-outline-info waves-effect ml-auto" data-dismiss="modal">Close</button>
+	            </div>
+	          </div>
+	          <!--/.Panel 8-->
+	        </div>
+
+	      </div>
+	    </div>
+	    <!--/.Content-->
+	  </div>
+	</div>
+	<!--Modal: Login / Register Form-->
+
+	<div class="text-center">
+	  <a href="" class="btn btn-default btn-rounded my-3" data-toggle="modal" data-target="#modalLRForm">LogIn/Register</a>
+	</div>
+
+
+	<div class="container editdata">
+		<form class="navbar-form navbar-left addboxes">
+			<div class="form-group">
+				<input type="text" id="editusername" class="form-control" placeholder="Username">
+	</div>
+
+	<div class="form-group">
+		<input type="text" id="editpassword" class="form-control" placeholder="Password">
+	</div>
+
+	<div class="form-group">
+		<input type="text" id="editbio" class="form-control"
+	 placeholder="Bio">
+	</div>
+
+
+	<button type="button" id="edit-btn" class="btn btn-default">Save</button>
+
+	</form>
+	</div>
+
+	<div class="modal" id="addchangemodal" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+	<div class="modal-content">
+	<div class="modal-header">
+		<h5 class="modal-title" id="messageTitle">Changes Saved</h5>
+	</div>
+	<div class="modal-body" id="modalMessage">
+		<p></p>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+	</div>
+	</div>
+	</div>
+	</div>
+
+	<div class="modal" id="deleteconfirm" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+	<div class="modal-content">
+	<div class="modal-header">
+		<h5 class="modal-title">Delete Confirm</h5>
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	<div class="modal-body" id=deleteMessage>
+		<p>Modal body text goes here.</p>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-primary completeDelete" data-dismiss="modal">Delete Record</button>
+		<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+	</div>
+	</div>
+	</div>
+	</div>
+
+	</div>
+
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+ 	 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <!--<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>-->
+ 	 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>-->
+
+ 	 <script src="artApp.js" type="text/javascript"></script>
+
+
+
+</body>
+</html>
