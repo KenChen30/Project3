@@ -176,7 +176,7 @@ function processAdd(results) {
 function addEntry(){
     $('#searchresults').empty();
     console.log("Add:"+$('#addusername').val());
-    saveRecord=$('#addusername').val()+' '+$('#addpassword').val()+','+$('#addbio').val()
+    saveRecord=$('#addusername').val()+', '+$('#addpassword').val()+', '+$('#addbio').val()
     $.ajax({
         url: Url+'/addrec?Username='+$('#addusername').val()+'&Password='+$('#addpassword').val()+'&Bio='+$('#addbio').val(),
         type:"GET",

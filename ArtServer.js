@@ -97,7 +97,7 @@ app.get('/find', function (req, res) {
 //Section for Comments and Ratings
 app.get('/listComments', function (req, res) {
     // Get a list of all records
-    query = "SELECT distinct Title, Comment FROM art ,CommentTable where art.Title = CommentTable.Title";
+    query = "SELECT distinct Title, Comment FROM art, CommentTable where art.Title = CommentTable.ArtTitle";
     con.query(query, function(err,result,fields) {
 	     if (err) throw err;
 	     console.log(result)
