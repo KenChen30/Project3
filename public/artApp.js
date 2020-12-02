@@ -107,25 +107,27 @@ function makeModal(row,i){
   result += "<div class=\"modal\" id=\"myPost"+i+"\" style=\"display:none;\"><div class=\"modal-dialog modal-lg\">";
   result += "<div class=\"modal-content\"><div class=\"modal-header\"><h4 class=\"modal-title\">"+row.Title+"</h4>";
   result += "<button type=\"button\" class=\"close\" data-dismiss=\"modal\"></button></div><div class=\"modal-body\"><br><img src="+row.IMGURL+" width='300' height='300'>";
+  result +=getComments(row.Title);
   result += "</br>"+row.Author+"<br/>"+row.Location+"<br/>"+row.Technique+"<br/>"+row.Form+"<br/>"+row.Type+"<br/>"+row.School+"<br/>"+row.Timeframe+"<br/>"+"<a style='color:blue;' href="+row.URL+">Art Page Link</a>"+"<br/>"+"</br><div id=\"myComment"+i+"\"></div><div id='loading' style=display:none;></div>";
+
   result += "<div id=\"postpage\"></div></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button></div></div></div></div>";
 
   return result;
 
 }
-// function getComments(title){
-//
-//   $.ajax({
-//       url: Url+'/listComments?Title='+title,
-//       type:"GET",
-//       success: processComment,
-//       error: displayError
-//   })
-// }
-// function processComment(results){
-//
-//      $('#myComment'+i).append(getComments(row.Title));
-// }
+function getComments(title){
+
+  $.ajax({
+      url: Url+'/listComments?Title='+title,
+      type:"POST",
+      success: processComment,
+      error: displayError
+  })
+}
+function processComment(results,i){
+
+     $('#myComment'+i).append(getComments(row.Title));
+}
 
 
 
