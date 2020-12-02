@@ -143,6 +143,16 @@ app.post('/auth', function(req, res) {
 });
 
 
+app.get('/picture',function(req, res) {
+  query = "SELECT IMGURL FROM art ORDER BY RAND() LIMIT 1";
+  con.query(query, function(err,result,fields) {
+     if (err) throw err;
+     console.log(result)
+     res.end( JSON.stringify(result));
+  })
+
+} )
+
 
 
 
