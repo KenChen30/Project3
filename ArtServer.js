@@ -96,13 +96,21 @@ app.get('/find', function (req, res) {
 //Section for Comments and Ratings
 app.get('/listComments', function (req, res) {
     // Get a list of all records
-    rectitle=req.query.Title;
-    query = "SELECT Comment FROM CommentTable where ArtTitle ="+rectitle;
+    recid=req.query.ID;
+    query = "SELECT Comment FROM CommentTable where ArtID = "+recid;
+
     con.query(query, function(err,result,fields) {
 	     if (err) throw err;
-	     console.log(result)
-	     res.end( JSON.stringify(result));
+       if (result == null){
+         console.log("No Comment")
+         res.end(JSON.stringify(result));
+     }else{
+
+       console.log(result)
+       res.end( JSON.stringify(result));
+   }
     })
+
 })
 
 app.get('/:id', function (req, res) {

@@ -103,11 +103,10 @@ function buildTable(data) {
 
 
 function makeModal(row,i){
-  var result = "<tr><td class='author'>"+row.Author+"</td><td class='title'>"+row.Title+"</td><td class='date'>"+row.Date+"</td><td><button onclick=\"showInfo('myButton"+i+"')\">Show Image</button><div id=\"myButton"+i+"\" style=\"display:none;\"><img src="+row.IMGURL+" width='300' height='300'></div></td><td><button onclick=\"showPostModal('myPost')\" data-toggle=\"modal\" data-target=\"#myPost"+i+"\">Open Art Page</button></td>";
+  var result = "<tr><td class='author'>"+row.Author+"</td><td class='title'>"+row.Title+"</td><td class='date'>"+row.Date+"</td><td><button onclick=\"showInfo('myButton"+i+"')\">Show Image</button><div id=\"myButton"+i+"\" style=\"display:none;\"><img src="+row.IMGURL+" width='300' height='300'></div></td><td><button onclick=\"showPostModal(myPost"+i+")\" data-toggle=\"modal\" data-target=\"#myPost"+i+"\">Open Art Page</button></td>";
   result += "<div class=\"modal\" id=\"myPost"+i+"\" style=\"display:none;\"><div class=\"modal-dialog modal-lg\">";
   result += "<div class=\"modal-content\"><div class=\"modal-header\"><h4 class=\"modal-title\">"+row.Title+"</h4>";
   result += "<button type=\"button\" class=\"close\" data-dismiss=\"modal\"></button></div><div class=\"modal-body\"><br><img src="+row.IMGURL+" width='300' height='300'>";
-  result +=getComments(row.Title);
   result += "</br>"+row.Author+"<br/>"+row.Location+"<br/>"+row.Technique+"<br/>"+row.Form+"<br/>"+row.Type+"<br/>"+row.School+"<br/>"+row.Timeframe+"<br/>"+"<a style='color:blue;' href="+row.URL+">Art Page Link</a>"+"<br/>"+"</br><div id=\"myComment"+i+"\"></div><div id='loading' style=display:none;></div>";
 
   result += "<div id=\"postpage\"></div></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button></div></div></div></div>";
@@ -115,18 +114,26 @@ function makeModal(row,i){
   return result;
 
 }
-function getComments(title){
+
+
+function getComments(id,i){
 
   $.ajax({
-      url: Url+'/listComments?Title='+title,
-      type:"POST",
-      success: processComment,
+      url: Url+'/listComments?ID='+id,
+      type:"GET",
+      index:i,
+      success: function (result){
+        processComment(result,this.index)
+      },
       error: displayError
   })
 }
+
+
 function processComment(results,i){
 
-     $('#myComment'+i).append(getComments(row.Title));
+
+    $('#myComment'+i).append(results);
 }
 
 
@@ -166,11 +173,14 @@ function showInfo(myButton) {
 
 function showPostModal(myPost) {
   var x = document.getElementById(myPost);
+
   if (x.style.display === "none") {
     x.style.display = "block";
-  } else {
     x.style.display = "none";
-  }
+  }else {
+  x.style.display = "none";
+
+}
 }
 
 // Called when the user clicks on the Edit button on the results list from a search
