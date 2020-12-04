@@ -108,7 +108,7 @@ function makeModal(row,i){
   result += "<div class=\"modal-content\"><div class=\"modal-header\"><h4 class=\"modal-title\">"+row.Title+"</h4>";
   result += "<button type=\"button\" class=\"close\" data-dismiss=\"modal\"></button></div><div class=\"modal-body\"><br><img src="+row.IMGURL+" width='300' height='300'>";
   result += "</br>"+row.Author+"<br/>"+row.Location+"<br/>"+row.Technique+"<br/>"+row.Form+"<br/>"+row.Type+"<br/>"+row.School+"<br/>"+row.Timeframe+"<br/>"+"<a style='color:blue;' href="+row.URL+">Art Page Link</a>"+"<br/>"+"</br><div id=\"myComment"+i+"\"></div><div id='loading' style=display:none;></div>";
-
+  getComments(row.ID,i);
   result += "<div id=\"postpage\"></div></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button></div></div></div></div>";
 
   return result;
@@ -131,8 +131,18 @@ function getComments(id,i){
 
 
 function processComment(results,i){
-
-
+    rows=JSON.parse(results);
+    if (rows.length < 1) {
+	    return "<h3>Nothing Found</h3>";
+    } else {
+      var results = '';
+    	var j=0;
+    	rows.forEach(function(row) {
+          results += row.Comment;
+          j++;
+    	})
+    }
+    console.log(results);
     $('#myComment'+i).append(results);
 }
 
@@ -172,13 +182,14 @@ function showInfo(myButton) {
 }
 
 function showPostModal(myPost) {
-  var x = document.getElementById(myPost);
-
-  if (x.style.display === "none") {
-    x.style.display = "block";
-    x.style.display = "none";
+  // var x = document.getElementById(myPost);
+  // console.log(myPost);
+  // console.log(x);
+  if (myPost.style.display === "none") {
+    myPost.style.display = "block";
+    myPost.style.display = "none";
   }else {
-  x.style.display = "none";
+  myPost.style.display = "none";
 
 }
 }
