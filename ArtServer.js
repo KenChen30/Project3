@@ -97,8 +97,7 @@ app.get('/find', function (req, res) {
 app.get('/listComments', function (req, res) {
     // Get a list of all records
     recid=req.query.ID;
-    query = "SELECT Comment FROM CommentTable where ArtID = "+recid;
-
+    query = "SELECT Username, Comment FROM CommentTable, UserInformation where CommentTable.UserID = UserInformation.ID and CommentTable.ArtID = "+recid;
     con.query(query, function(err,result,fields) {
 	     if (err) throw err;
        if (result == null){

@@ -138,7 +138,7 @@ function processComment(results,i){
       var results = '';
     	var j=0;
     	rows.forEach(function(row) {
-          results += row.Comment;
+          results += row.Username + ": "+ row.Comment;
           j++;
     	})
     }
