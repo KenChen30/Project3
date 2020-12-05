@@ -94,6 +94,17 @@ app.get('/find', function (req, res) {
     }
 })
 
+app.get('/getUsernameById', function (req, res) {
+    // find record(s) by name last
+	query = "SELECT ID FROM UserInformation WHERE ID = " + req.query.UserID;
+	console.log(query);
+	con.query(query, function(err,result,fields) {
+	    if (err) throw err;
+	    console.log(result);
+	    res.end( JSON.stringify(result));
+	})
+})
+
 //Section for Comments and Ratings
 app.get('/listComments', function (req, res) {
     // Get a list of all records
@@ -106,19 +117,16 @@ app.get('/listComments', function (req, res) {
          res.end(JSON.stringify(result));
      }else{
 
-       console.log(result)
+       console.log(result);
        res.end(JSON.stringify(result));
    }
     })
 
 })
 
+
+
 app.get('/addComment', function (req, res) {
-    // update a record by id
-    if (missingField(req.query)) {
-        console.log("Bad add request:"+JSON.stringify(req.query));
-        res.end("['fail']");
-    } else {
 	query = "Insert INTO CommentTable(UserID, Comment, ArtID)  VALUES('"+req.query.UserID+"','"+req.query.Comment+"','"+req.query.ArtID+"')";
  	console.log(query);
 	con.query(query, function(err,result,fields) {
@@ -126,7 +134,6 @@ app.get('/addComment', function (req, res) {
 	    console.log(result)
 	    res.end(JSON.stringify(result));
 	})
-    }
 })
 
 
@@ -140,33 +147,11 @@ app.get('/:id', function (req, res) {
     	console.log(query);
     	con.query(query, function(err,result,fields) {
     	    if (err) throw err;
-    	    console.log(result)
-    	    res.end( JSON.stringify(result));
+    	    console.log(result);
+    	    res.end(JSON.stringify(result));
 	})
     }
 })
-
-
-function setCookie(value) {
-  console.log("Set cookie to:"+value);
-  document.cookie='myCookie='+value;
-}
-
-function getCookie(cname) {
-  var name = cname + "=";
-  var decodedCookie = decodeURIComponent(document.cookie);
-  var ca = decodedCookie.split(';');
-  for(var i = 0; i <ca.length; i++) {
-    var c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
-}
 
 
 app.post('/auth', function(req, res) {
@@ -177,9 +162,10 @@ app.post('/auth', function(req, res) {
 			if (results.length > 0) {
 				req.session.loggedin = true;
 				req.session.username = username;
-        setCookie(username);
-				res.redirect('/artApp.html');
-
+        var id = results[0].ID;
+        console.log("This is the id"+id);
+			    res.redirect("/artApp.html?UID="+id);
+//        res.send('{"status":"success","ID","'+id+'"}');
 
 			} else {
 				res.send('Incorrect Username and/or Password!');

@@ -8,9 +8,16 @@ var recIndex
 var rows;
 var saveRecord; // Place to store record for add varification
 var loggedIn = false;
+var UserID;
 
 // Set up events when page is ready
 $(document).ready(function () {
+
+    // get the UID
+    var url = window.location.href;
+    params=getParams(url);
+    UserID=params.UID;
+    console.log("UID:",UserID);
 
     $("#modalLRForm").modal('show');
 
@@ -27,7 +34,8 @@ $(document).ready(function () {
     });
     $("#add-btn").click(addEntry);
     $("#clear").click(clearResults);
-    $("#login-btn").click(login);
+    // $("#login-btn").click(login);
+    $("#login-btn").click(setCookie);
     //Handle pulldown menu
     $(".dropdown-menu li a").click(function(){
 	$(this).parents(".btn-group").find('.selection').text($(this).text());
@@ -75,6 +83,26 @@ function changeOperation(operation){
     }
 }
 
+function setCookie() {
+  document.cookie='myCookie='+value;
+}
+
+function getCookie(cname) {
+  var name = cname + "=";
+  var decodedCookie = decodeURIComponent(document.cookie);
+  var ca = decodedCookie.split(';');
+  for(var i = 0; i <ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
 // Build output table from comma delimited data list from the server (a list of phone entries)
 function buildTable(data) {
     rows=JSON.parse(data);
@@ -109,7 +137,7 @@ function makeModal(row,i){
   result += "<button type=\"button\" class=\"close\" data-dismiss=\"modal\"></button></div><div class=\"modal-body\"><br><img src="+row.IMGURL+" width='300' height='300'>";
   result += "</br>"+row.Author+"<br/>"+row.Location+"<br/>"+row.Technique+"<br/>"+row.Form+"<br/>"+row.Type+"<br/>"+row.School+"<br/>"+row.Timeframe+"<br/>"+"<a style='color:blue;' href="+row.URL+">Art Page Link</a>"+"<br/>"+"</br><div id=\"myComment"+i+"\"></div><div id='loading' style=display:none;></div>";
   getComments(row.ID,i);
-  result += "<input type=\"text\" id=\"userComment\" class=\"form-control\" placeholder=\"Add Comment\"><button onclick=\"addComment()\">Comment</button>";
+  result += "<input type=\"text\" id=\"userComment\" class=\"form-control\" placeholder=\"Add Comment\"><button onclick=\"addComment("+row.ID+")\">Comment</button>";
   result += "<div id=\"postpage\"></div></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button></div></div></div></div>";
   return result;
 
@@ -129,6 +157,22 @@ function getComments(id,i){
   })
 }
 
+function getIDByUserID(id){
+
+  $.ajax({
+      url: Url+'/getIDByUserID?UserID='+id,
+      type:"GET",
+      success:processUsernameById,
+      error: displayError
+  })
+
+}
+
+function processUsernameById() {
+    // Look up the record and display it
+    console.log("Process Username By Id success:"+saveRecord);
+
+}
 
 function processComment(results,i){
     rows=JSON.parse(results);
@@ -282,11 +326,12 @@ function clearResults() {
 }
 
 
-function addComment(){
+function addComment(artID){
     console.log("Add:"+$('#userComment').val());
     saveRecord=$('#userComment').val();
+    var stringUserID = UserID;
     $.ajax({
-        url: Url+'/addComment?Comment='+$('#userComment').val(),
+        url: Url+'/addComment?UserID='+stringUserID+'&Comment='+saveRecord+'&ArtID='+artID,
         type:"GET",
         success: processAddComment,
         error: displayError
@@ -297,7 +342,7 @@ function addComment(){
 function processAddComment(results) {
     // Look up the record and display it
     console.log("Add success:"+saveRecord);
-    
+
 }
 // function authenticate() {
 //   var password = document.getElementById('loginpassword').value;
@@ -380,3 +425,16 @@ function getMatches(){
     })
 
 }
+
+var getParams = function (url) {
+  var params = {};
+  var parser = document.createElement('a');
+  parser.href = url;
+  var query = parser.search.substring(1);
+  var vars = query.split('&');
+  for (var i = 0; i < vars.length; i++) {
+    var pair = vars[i].split('=');
+    params[pair[0]] = decodeURIComponent(pair[1]);
+  }
+  return params;
+};
