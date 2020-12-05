@@ -94,16 +94,16 @@ app.get('/find', function (req, res) {
     }
 })
 
-app.get('/getUsernameById', function (req, res) {
-    // find record(s) by name last
-	query = "SELECT ID FROM UserInformation WHERE ID = " + req.query.UserID;
-	console.log(query);
-	con.query(query, function(err,result,fields) {
-	    if (err) throw err;
-	    console.log(result);
-	    res.end( JSON.stringify(result));
-	})
-})
+// app.get('/getUsernameById', function (req, res) {
+//     // find record(s) by name last
+// 	query = "SELECT ID FROM UserInformation WHERE ID = " + req.query.UserID;
+// 	console.log(query);
+// 	con.query(query, function(err,result,fields) {
+// 	    if (err) throw err;
+// 	    console.log(result);
+// 	    res.end( JSON.stringify(result));
+// 	})
+// })
 
 //Section for Comments and Ratings
 app.get('/listComments', function (req, res) {
@@ -124,12 +124,36 @@ app.get('/listComments', function (req, res) {
 
 })
 
-
-
 app.get('/addComment', function (req, res) {
 	query = "Insert INTO CommentTable(UserID, Comment, ArtID)  VALUES('"+req.query.UserID+"','"+req.query.Comment+"','"+req.query.ArtID+"')";
  	console.log(query);
 	con.query(query, function(err,result,fields) {
+	    if (err) throw err;
+	    console.log(result)
+	    res.end(JSON.stringify(result));
+	})
+})
+
+app.get('/getLikes', function (req, res) {
+    // Get a list of all records
+    query = "SELECT count(RatingLike) FROM RatingTable where RatingLike = 'T' and RatingArtID = " + req.query.ID;
+    con.query(query, function(err,result,fields) {
+	     if (err) throw err;
+       if (result == null){
+         console.log("No Like")
+         res.end(JSON.stringify(result));
+     }else{
+       console.log(result);
+       res.end(JSON.stringify(result));
+   }
+    })
+
+})
+
+app.get('/addLike', function (req, res) {
+	insertQuery = "Insert INTO RatingTable(UserID, Comment, ArtID)  VALUES('"+req.query.UserID+"','"+req.query.Comment+"','"+req.query.ArtID+"')";
+ 	console.log(insertQuery);
+	con.query(insertQuery, function(err,result,fields) {
 	    if (err) throw err;
 	    console.log(result)
 	    res.end(JSON.stringify(result));
@@ -164,7 +188,7 @@ app.post('/auth', function(req, res) {
 				req.session.username = username;
         var id = results[0].ID;
         console.log("This is the id"+id);
-			    res.redirect("/artApp.html?UID="+id);
+			  res.redirect("/artApp.html?UID="+id);
 //        res.send('{"status":"success","ID","'+id+'"}');
 
 			} else {

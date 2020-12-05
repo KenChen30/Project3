@@ -9,6 +9,7 @@ var rows;
 var saveRecord; // Place to store record for add varification
 var loggedIn = false;
 var UserID;
+var LikeStatus = false;
 
 // Set up events when page is ready
 $(document).ready(function () {
@@ -35,7 +36,7 @@ $(document).ready(function () {
     $("#add-btn").click(addEntry);
     $("#clear").click(clearResults);
     // $("#login-btn").click(login);
-    $("#login-btn").click(setCookie);
+    // $("#login-btn").click(setCookie);
     //Handle pulldown menu
     $(".dropdown-menu li a").click(function(){
 	$(this).parents(".btn-group").find('.selection').text($(this).text());
@@ -47,6 +48,15 @@ $(document).ready(function () {
     $('.completeDelete').click(processDelete);
 
 });
+
+// function checkUID() {
+//   var checkID = UserID;
+//   if (checkID === undefined) {
+//     $.ajax({
+//         url: Url+'/auth',
+//     })
+//   }
+// }
 
 // This processes the results from the server after we have sent it a lookup request.
 // This clears any previous work, and then calls buildTable to create a nice
@@ -136,11 +146,40 @@ function makeModal(row,i){
   result += "<div class=\"modal-content\"><div class=\"modal-header\"><h4 class=\"modal-title\">"+row.Title+"</h4>";
   result += "<button type=\"button\" class=\"close\" data-dismiss=\"modal\"></button></div><div class=\"modal-body\"><br><img src="+row.IMGURL+" width='300' height='300'>";
   result += "</br>"+row.Author+"<br/>"+row.Location+"<br/>"+row.Technique+"<br/>"+row.Form+"<br/>"+row.Type+"<br/>"+row.School+"<br/>"+row.Timeframe+"<br/>"+"<a style='color:blue;' href="+row.URL+">Art Page Link</a>"+"<br/>"+"</br><div id=\"myComment"+i+"\"></div><div id='loading' style=display:none;></div>";
+  result += "<button onclick=\"doLike("+row.ID+")\">Comment</button>";
   getComments(row.ID,i);
   result += "<input type=\"text\" id=\"userComment\" class=\"form-control\" placeholder=\"Add Comment\"><button onclick=\"addComment("+row.ID+")\">Comment</button>";
   result += "<div id=\"postpage\"></div></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button></div></div></div></div>";
   return result;
 
+}
+
+function doLike(artid,i) {
+  $.ajax({
+      url: Url+'/doLike?ID='+id,
+      type:"GET",
+      index:i,
+      success: function (result){
+        processLike(result,this.index)
+      },
+      error: displayError
+  })
+}
+
+function processLike(results,i) {
+  
+}
+
+function checkLike() {
+  var allowLike;
+  if (LikeStatus == true) {
+    allowLike = false;
+    LikeStatus=false;
+  }
+  else {
+    allowLike = true;
+    LikeStatus=true;
+  }
 }
 
 
@@ -157,22 +196,22 @@ function getComments(id,i){
   })
 }
 
-function getIDByUserID(id){
-
-  $.ajax({
-      url: Url+'/getIDByUserID?UserID='+id,
-      type:"GET",
-      success:processUsernameById,
-      error: displayError
-  })
-
-}
-
-function processUsernameById() {
-    // Look up the record and display it
-    console.log("Process Username By Id success:"+saveRecord);
-
-}
+// function getIDByUserID(id){
+//
+//   $.ajax({
+//       url: Url+'/getIDByUserID?UserID='+id,
+//       type:"GET",
+//       success:processUsernameById,
+//       error: displayError
+//   })
+//
+// }
+//
+// function processUsernameById() {
+//     // Look up the record and display it
+//     console.log("Process Username By Id success:"+saveRecord);
+//
+// }
 
 function processComment(results,i){
     rows=JSON.parse(results);
@@ -182,7 +221,7 @@ function processComment(results,i){
       var results = '';
     	var j=0;
     	rows.forEach(function(row) {
-          results += row.Username + ": "+ row.Comment;
+          results += row.Username + ": "+ row.Comment + "<br>";
           j++;
     	})
     }
