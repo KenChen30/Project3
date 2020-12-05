@@ -109,8 +109,8 @@ function makeModal(row,i){
   result += "<button type=\"button\" class=\"close\" data-dismiss=\"modal\"></button></div><div class=\"modal-body\"><br><img src="+row.IMGURL+" width='300' height='300'>";
   result += "</br>"+row.Author+"<br/>"+row.Location+"<br/>"+row.Technique+"<br/>"+row.Form+"<br/>"+row.Type+"<br/>"+row.School+"<br/>"+row.Timeframe+"<br/>"+"<a style='color:blue;' href="+row.URL+">Art Page Link</a>"+"<br/>"+"</br><div id=\"myComment"+i+"\"></div><div id='loading' style=display:none;></div>";
   getComments(row.ID,i);
+  result += "<input type=\"text\" id=\"userComment\" class=\"form-control\" placeholder=\"Add Comment\"><button onclick=\"addComment()\">Comment</button>";
   result += "<div id=\"postpage\"></div></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button></div></div></div></div>";
-
   return result;
 
 }
@@ -282,6 +282,23 @@ function clearResults() {
 }
 
 
+function addComment(){
+    console.log("Add:"+$('#userComment').val());
+    saveRecord=$('#userComment').val();
+    $.ajax({
+        url: Url+'/addComment?Comment='+$('#userComment').val(),
+        type:"GET",
+        success: processAddComment,
+        error: displayError
+  })
+}
+
+
+function processAddComment(results) {
+    // Look up the record and display it
+    console.log("Add success:"+saveRecord);
+    
+}
 // function authenticate() {
 //   var password = document.getElementById('loginpassword').value;
 //   var username = document.getElementById('loginusername').value;
@@ -308,6 +325,10 @@ function login(results) {
   })
 
 }
+
+
+
+
 function randomPicture(){
   $.ajax({
       url: Url+'/picture?',

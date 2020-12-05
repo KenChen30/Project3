@@ -61,6 +61,7 @@ app.get('/addrec', function (req, res) {
     }
 })
 
+
 // Section for Art Search
 app.get('/list', function (req, res) {
     // Get a list of all records
@@ -106,11 +107,28 @@ app.get('/listComments', function (req, res) {
      }else{
 
        console.log(result)
-       res.end( JSON.stringify(result));
+       res.end(JSON.stringify(result));
    }
     })
 
 })
+
+app.get('/addComment', function (req, res) {
+    // update a record by id
+    if (missingField(req.query)) {
+        console.log("Bad add request:"+JSON.stringify(req.query));
+        res.end("['fail']");
+    } else {
+	query = "Insert INTO CommentTable(UserID, Comment, ArtID)  VALUES('"+req.query.UserID+"','"+req.query.Comment+"','"+req.query.ArtID+"')";
+ 	console.log(query);
+	con.query(query, function(err,result,fields) {
+	    if (err) throw err;
+	    console.log(result)
+	    res.end(JSON.stringify(result));
+	})
+    }
+})
+
 
 app.get('/:id', function (req, res) {
     // Get a record by id
@@ -129,6 +147,28 @@ app.get('/:id', function (req, res) {
 })
 
 
+function setCookie(value) {
+  console.log("Set cookie to:"+value);
+  document.cookie='myCookie='+value;
+}
+
+function getCookie(cname) {
+  var name = cname + "=";
+  var decodedCookie = decodeURIComponent(document.cookie);
+  var ca = decodedCookie.split(';');
+  for(var i = 0; i <ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
+
 app.post('/auth', function(req, res) {
 	var username = req.body.username;
 	var password = req.body.password;
@@ -137,7 +177,10 @@ app.post('/auth', function(req, res) {
 			if (results.length > 0) {
 				req.session.loggedin = true;
 				req.session.username = username;
+        setCookie(username);
 				res.redirect('/artApp.html');
+
+
 			} else {
 				res.send('Incorrect Username and/or Password!');
 			}
