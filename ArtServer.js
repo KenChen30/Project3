@@ -134,12 +134,12 @@ app.get('/addComment', function (req, res) {
 	})
 })
 
-app.get('/getLikes', function (req, res) {
+app.get('/getLike', function (req, res) {
     // Get a list of all records
-    query = "SELECT count(RatingLike) FROM RatingTable where RatingLike = 'T' and RatingArtID = " + req.query.ID;
+    query = "SELECT count(RatingLike) as NumLike FROM RatingTable where RatingLike = 'T' and RatingArtID = " + req.query.ID;
     con.query(query, function(err,result,fields) {
 	     if (err) throw err;
-       if (result == null){
+       if (result == 0){
          console.log("No Like")
          res.end(JSON.stringify(result));
      }else{
@@ -151,9 +151,9 @@ app.get('/getLikes', function (req, res) {
 })
 
 app.get('/addLike', function (req, res) {
-	insertQuery = "Insert INTO RatingTable(UserID, Comment, ArtID)  VALUES('"+req.query.UserID+"','"+req.query.Comment+"','"+req.query.ArtID+"')";
- 	console.log(insertQuery);
-	con.query(insertQuery, function(err,result,fields) {
+	query = "Insert INTO RatingTable(RatingUserID,RatingArtID,RatingLike)  VALUES('"+req.query.RatingUserID+"','"+req.query.RatingArtID+"','T')";
+ 	console.log(query);
+	con.query(query, function(err,result,fields) {
 	    if (err) throw err;
 	    console.log(result)
 	    res.end(JSON.stringify(result));

@@ -145,8 +145,11 @@ function makeModal(row,i){
   result += "<div class=\"modal\" id=\"myPost"+i+"\" style=\"display:none;\"><div class=\"modal-dialog modal-lg\">";
   result += "<div class=\"modal-content\"><div class=\"modal-header\"><h4 class=\"modal-title\">"+row.Title+"</h4>";
   result += "<button type=\"button\" class=\"close\" data-dismiss=\"modal\"></button></div><div class=\"modal-body\"><br><img src="+row.IMGURL+" width='300' height='300'>";
-  result += "</br>"+row.Author+"<br/>"+row.Location+"<br/>"+row.Technique+"<br/>"+row.Form+"<br/>"+row.Type+"<br/>"+row.School+"<br/>"+row.Timeframe+"<br/>"+"<a style='color:blue;' href="+row.URL+">Art Page Link</a>"+"<br/>"+"</br><div id=\"myComment"+i+"\"></div><div id='loading' style=display:none;></div>";
-  result += "<button onclick=\"doLike("+row.ID+")\">Comment</button>";
+  result += "</br>"+row.Author+"<br/>"+row.Location+"<br/>"+row.Technique+"<br/>"+row.Form+"<br/>"+row.Type+"<br/>"+row.School+"<br/>"+row.Timeframe+"<br/>"+"<a style='color:blue;' href="+row.URL+">Art Page Link</a><br/>";
+  result += "<div id=\"Like"+i+"\"></div><div id='loading' style=display:none;></div></br>";
+  getLike(row.ID,i);
+  result += "<button onclick=\"addLike("+row.ID+")\">Like</button>";
+  result += "<div id=\"myComment"+i+"\"></div><div id='loading' style=display:none;></div>";
   getComments(row.ID,i);
   result += "<input type=\"text\" id=\"userComment\" class=\"form-control\" placeholder=\"Add Comment\"><button onclick=\"addComment("+row.ID+")\">Comment</button>";
   result += "<div id=\"postpage\"></div></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button></div></div></div></div>";
@@ -154,9 +157,9 @@ function makeModal(row,i){
 
 }
 
-function doLike(artid,i) {
+function getLike(xid,i) {
   $.ajax({
-      url: Url+'/doLike?ID='+id,
+      url: Url+'/getLike?ID='+xid,
       type:"GET",
       index:i,
       success: function (result){
@@ -167,20 +170,46 @@ function doLike(artid,i) {
 }
 
 function processLike(results,i) {
-  
+  rows=JSON.parse(results);
+  if (rows.length < 1) {
+    return "<h3>Nothing Found</h3>";
+  } else {
+    var results = '';
+    var j=0;
+    rows.forEach(function(row) {
+        results += "Likes" + ": "+ row.NumLike + "<br>";
+        j++;
+    })
+  }
+  console.log(results);
+  $('#Like'+i).append(results);
 }
 
-function checkLike() {
-  var allowLike;
-  if (LikeStatus == true) {
-    allowLike = false;
-    LikeStatus=false;
-  }
-  else {
-    allowLike = true;
-    LikeStatus=true;
-  }
+function addLike(artID){
+
+  var stringUserID = UserID;
+  $.ajax({
+      url: Url+'/addLike?RatingUserID='+stringUserID+'&RatingArtID='+artID,
+      type:"GET",
+      success: processAddLike,
+      error: displayError
+})
 }
+function processAddLike() {
+    console.log("Like = Success");
+}
+
+// function checkLike() {
+//   var allowLike;
+//   if (LikeStatus == true) {
+//     allowLike = false;
+//     LikeStatus=false;
+//   }
+//   else {
+//     allowLike = true;
+//     LikeStatus=true;
+//   }
+// }
 
 
 function getComments(id,i){
