@@ -53,7 +53,7 @@ $(document).ready(function () {
 function checkUID() {
   var checkID = UserID;
   if (checkID === undefined && window.location.href=== Url+"/artApp.html") {
-    location.replace(Url)
+    location.replace(Url);
   }
 }
 
