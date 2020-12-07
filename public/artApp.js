@@ -19,6 +19,7 @@ $(document).ready(function () {
     params=getParams(url);
     UserID=params.UID;
     console.log("UID:",UserID);
+    checkUID();
 
     $("#modalLRForm").modal('show');
 
@@ -28,7 +29,7 @@ $(document).ready(function () {
 
     // Clear everything on startup
     $('.editdata').hide();
-    $("#search-btn").click(getMatches);  // Search button click
+    $("#search-btn").click(getMatches).click(checkUID);  // Search button click
     // do a search on every keystroke.
     $("#search").keyup(function(e){
 	getMatches();
@@ -49,14 +50,12 @@ $(document).ready(function () {
 
 });
 
-// function checkUID() {
-//   var checkID = UserID;
-//   if (checkID === undefined) {
-//     $.ajax({
-//         url: Url+'/auth',
-//     })
-//   }
-// }
+function checkUID() {
+  var checkID = UserID;
+  if (checkID === undefined && window.location.href=== Url+"/artApp.html") {
+    location.replace(Url)
+  }
+}
 
 // This processes the results from the server after we have sent it a lookup request.
 // This clears any previous work, and then calls buildTable to create a nice
@@ -123,13 +122,7 @@ function buildTable(data) {
 	var i=0;
 	rows.forEach(function(row) {
 
-	    // result += "<tr><td class='author'>"+row.Author+"</td><td class='title'>"+row.Title+"</td><td class='date'>"+row.Date+"</td><td><button onclick=\"showInfo('myButton"+i+"')\">Show Image</button><div id=\"myButton"+i+"\" style=\"display:none;\"><img src="+row.IMGURL+" width='300' height='300'></div></td><td><button onclick=\"showPostModal('myPost')\" data-toggle=\"modal\" data-target=\"#myPost"+i+"\">Open Art Page</button></td>";
-      // if we add class=\"modal fade\" in the div below the button cannot function, and if we delete the class=\"modal fade\", the close button for the modal will not work.
-      // result += "<div class=\"modal\" id=\"myPost"+i+"\" style=\"display:none;\"><div class=\"modal-dialog modal-lg\">";
-      // result += "<div class=\"modal-content\"><div class=\"modal-header\"><h4 class=\"modal-title\">"+row.Title+"</h4>";
-      // result += "<button type=\"button\" class=\"close\" data-dismiss=\"modal\"></button></div><div class=\"modal-body\"><br><img src="+row.IMGURL+" width='300' height='300'>";
-      // result += "</br>"+row.Author+"<br/>"+row.Location+"<br/>"+row.Technique+"<br/>"+row.Form+"<br/>"+row.Type+"<br/>"+row.School+"<br/>"+row.Timeframe+"<br/>"+"<a style='color:blue;' href="+row.URL+">Art Page Link</a>"+"<br/>"+"</br><div id=\"myComment"+i+"\"></div><div id='loading' style=display:none;></div>";
-      // result += "<div id=\"postpage\"></div></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button></div></div></div></div>";
+
       result+=makeModal(row,i);
       i++;
 	})
@@ -197,19 +190,10 @@ function addLike(artID){
 }
 function processAddLike() {
     console.log("Like = Success");
+    location.replace(window.location.href)
+
 }
 
-// function checkLike() {
-//   var allowLike;
-//   if (LikeStatus == true) {
-//     allowLike = false;
-//     LikeStatus=false;
-//   }
-//   else {
-//     allowLike = true;
-//     LikeStatus=true;
-//   }
-// }
 
 
 function getComments(id,i){
@@ -225,22 +209,7 @@ function getComments(id,i){
   })
 }
 
-// function getIDByUserID(id){
-//
-//   $.ajax({
-//       url: Url+'/getIDByUserID?UserID='+id,
-//       type:"GET",
-//       success:processUsernameById,
-//       error: displayError
-//   })
-//
-// }
-//
-// function processUsernameById() {
-//     // Look up the record and display it
-//     console.log("Process Username By Id success:"+saveRecord);
-//
-// }
+
 
 function processComment(results,i){
     rows=JSON.parse(results);
@@ -266,9 +235,7 @@ function processComment(results,i){
 
 
 
-//<button onclick=\"hideTable()\">Hide Table</button>
-//<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Open modal</button>
-//
+
 function buildPostPage(artRow) {
 	var result;
   result += 1;
