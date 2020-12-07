@@ -61,6 +61,7 @@ app.get('/addrec', function (req, res) {
     }
 })
 
+
 // Section for Art Search
 app.get('/list', function (req, res) {
     // Get a list of all records
@@ -93,17 +94,72 @@ app.get('/find', function (req, res) {
     }
 })
 
+// app.get('/getUsernameById', function (req, res) {
+//     // find record(s) by name last
+// 	query = "SELECT ID FROM UserInformation WHERE ID = " + req.query.UserID;
+// 	console.log(query);
+// 	con.query(query, function(err,result,fields) {
+// 	    if (err) throw err;
+// 	    console.log(result);
+// 	    res.end( JSON.stringify(result));
+// 	})
+// })
+
 //Section for Comments and Ratings
 app.get('/listComments', function (req, res) {
     // Get a list of all records
-    rectitle=req.query.Title;
-    query = "SELECT Comment FROM CommentTable where ArtTitle ="+rectitle;
+    recid=req.query.ID;
+    query = "SELECT Username, Comment FROM CommentTable, UserInformation where CommentTable.UserID = UserInformation.ID and CommentTable.ArtID = "+recid;
     con.query(query, function(err,result,fields) {
 	     if (err) throw err;
-	     console.log(result)
-	     res.end( JSON.stringify(result));
+       if (result == null){
+         console.log("No Comment")
+         res.end(JSON.stringify(result));
+     }else{
+
+       console.log(result);
+       res.end(JSON.stringify(result));
+   }
     })
+
 })
+
+app.get('/addComment', function (req, res) {
+	query = "Insert INTO CommentTable(UserID, Comment, ArtID)  VALUES('"+req.query.UserID+"','"+req.query.Comment+"','"+req.query.ArtID+"')";
+ 	console.log(query);
+	con.query(query, function(err,result,fields) {
+	    if (err) throw err;
+	    console.log(result)
+	    res.end(JSON.stringify(result));
+	})
+})
+
+app.get('/getLike', function (req, res) {
+    // Get a list of all records
+    query = "SELECT count(RatingLike) as NumLike FROM RatingTable where RatingLike = 'T' and RatingArtID = " + req.query.ID;
+    con.query(query, function(err,result,fields) {
+	     if (err) throw err;
+       if (result == 0){
+         console.log("No Like")
+         res.end(JSON.stringify(result));
+     }else{
+       console.log(result);
+       res.end(JSON.stringify(result));
+   }
+    })
+
+})
+
+app.get('/addLike', function (req, res) {
+	query = "Insert INTO RatingTable(RatingUserID,RatingArtID,RatingLike)  VALUES('"+req.query.RatingUserID+"','"+req.query.RatingArtID+"','T')";
+ 	console.log(query);
+	con.query(query, function(err,result,fields) {
+	    if (err) throw err;
+	    console.log(result)
+	    res.end(JSON.stringify(result));
+	})
+})
+
 
 app.get('/:id', function (req, res) {
     // Get a record by id
@@ -115,8 +171,8 @@ app.get('/:id', function (req, res) {
     	console.log(query);
     	con.query(query, function(err,result,fields) {
     	    if (err) throw err;
-    	    console.log(result)
-    	    res.end( JSON.stringify(result));
+    	    console.log(result);
+    	    res.end(JSON.stringify(result));
 	})
     }
 })
@@ -130,7 +186,11 @@ app.post('/auth', function(req, res) {
 			if (results.length > 0) {
 				req.session.loggedin = true;
 				req.session.username = username;
-				res.redirect('/artApp.html');
+        var id = results[0].ID;
+        console.log("This is the id"+id);
+			  res.redirect("/artApp.html?UID="+id);
+//        res.send('{"status":"success","ID","'+id+'"}');
+
 			} else {
 				res.send('Incorrect Username and/or Password!');
 			}
@@ -142,6 +202,16 @@ app.post('/auth', function(req, res) {
 	}
 });
 
+
+app.get('/picture',function(req, res) {
+  query = "SELECT IMGURL FROM art ORDER BY RAND() LIMIT 1";
+  con.query(query, function(err,result,fields) {
+     if (err) throw err;
+     console.log(result)
+     res.end( JSON.stringify(result));
+  })
+
+} )
 
 
 

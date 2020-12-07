@@ -8,9 +8,18 @@ var recIndex
 var rows;
 var saveRecord; // Place to store record for add varification
 var loggedIn = false;
+var UserID;
+var LikeStatus = false;
 
 // Set up events when page is ready
 $(document).ready(function () {
+
+    // get the UID
+    var url = window.location.href;
+    params=getParams(url);
+    UserID=params.UID;
+    console.log("UID:",UserID);
+    checkUID();
 
     $("#modalLRForm").modal('show');
 
@@ -20,14 +29,15 @@ $(document).ready(function () {
 
     // Clear everything on startup
     $('.editdata').hide();
-    $("#search-btn").click(getMatches);  // Search button click
+    $("#search-btn").click(getMatches).click(checkUID);  // Search button click
     // do a search on every keystroke.
     $("#search").keyup(function(e){
 	getMatches();
     });
     $("#add-btn").click(addEntry);
     $("#clear").click(clearResults);
-    $("#login-btn").click(login);
+    // $("#login-btn").click(login);
+    // $("#login-btn").click(setCookie);
     //Handle pulldown menu
     $(".dropdown-menu li a").click(function(){
 	$(this).parents(".btn-group").find('.selection').text($(this).text());
@@ -39,6 +49,13 @@ $(document).ready(function () {
     $('.completeDelete').click(processDelete);
 
 });
+
+function checkUID() {
+  var checkID = UserID;
+  if (checkID === undefined && window.location.href=== Url+"/artApp.html") {
+    location.replace(Url)
+  }
+}
 
 // This processes the results from the server after we have sent it a lookup request.
 // This clears any previous work, and then calls buildTable to create a nice
@@ -75,6 +92,26 @@ function changeOperation(operation){
     }
 }
 
+function setCookie() {
+  document.cookie='myCookie='+value;
+}
+
+function getCookie(cname) {
+  var name = cname + "=";
+  var decodedCookie = decodeURIComponent(document.cookie);
+  var ca = decodedCookie.split(';');
+  for(var i = 0; i <ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
 // Build output table from comma delimited data list from the server (a list of phone entries)
 function buildTable(data) {
     rows=JSON.parse(data);
@@ -84,15 +121,9 @@ function buildTable(data) {
 	var result = '<table class="w3-table-all w3-hoverable" border="2"><tr><th>Author</th><th>Title</th><th>Date</th><th>Image</th><th>Hide</th><tr>';
 	var i=0;
 	rows.forEach(function(row) {
-	    result += "<tr><td class='author'>"+row.Author+"</td><td class='title'>"+row.Title+"</td><td class='date'>"+row.Date+"</td><td><button onclick=\"showInfo('myButton"+i+"')\">Show Image</button><div id=\"myButton"+i+"\" style=\"display:none;\"><img src="+row.IMGURL+" width='300' height='300'></div></td><td><button onclick=\"showPostModal('myPost"+i+"')\" data-toggle=\"modal\" data-target=\"#myPost"+i+"\">Open Art Page</button></td>";
-      // if we add class=\"modal fade\" in the div below the button cannot function, and if we delete the class=\"modal fade\", the close button for the modal will not work.
-      result += "<div class=\"modal\" id=\"myPost"+i+"\" style=\"display:none;\"><div class=\"modal-dialog modal-lg\">";
-      result += "<div class=\"modal-content\"><div class=\"modal-header\"><h4 class=\"modal-title\">"+row.Title+"</h4>";
-      result += "<button type=\"button\" class=\"close\" data-dismiss=\"modal\"></button></div><div class=\"modal-body\"><br><img src="+row.IMGURL+" width='300' height='300'>";
-      result += "</br>"+row.Author+"<br/>"+row.Location+"<br/>"+row.Technique+"<br/>"+row.Form+"<br/>"+row.Type+"<br/>"+row.School+"<br/>"+row.Timeframe+"<br/>"+"<a style='color:blue;' href="+row.URL+">Art Page Link</a>"+"<br/>"+"</br><div id=\"myComment"+i+"\"></div><div id='loading' style=display:none;></div>";
-      result += "<div id=\"postpage\"></div></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button></div></div></div></div>";
 
 
+      result+=makeModal(row,i);
       i++;
 	})
 	result += "</table>";
@@ -100,19 +131,101 @@ function buildTable(data) {
 	return result;
     }
 }
-// function getComments(title){
-//
-//   $.ajax({
-//       url: Url+'/listComments?Title='+title,
-//       type:"GET",
-//       success: processComment,
-//       error: displayError
-//   })
-// }
-// function processComment(results){
-//
-//      $('#myComment'+i).append(getComments(row.Title));
-// }
+
+
+function makeModal(row,i){
+  var result = "<tr><td class='author'>"+row.Author+"</td><td class='title'>"+row.Title+"</td><td class='date'>"+row.Date+"</td><td><button onclick=\"showInfo('myButton"+i+"')\">Show Image</button><div id=\"myButton"+i+"\" style=\"display:none;\"><img src="+row.IMGURL+" width='300' height='300'></div></td><td><button onclick=\"showPostModal(myPost"+i+")\" data-toggle=\"modal\" data-target=\"#myPost"+i+"\">Open Art Page</button></td>";
+  result += "<div class=\"modal\" id=\"myPost"+i+"\" style=\"display:none;\"><div class=\"modal-dialog modal-lg\">";
+  result += "<div class=\"modal-content\"><div class=\"modal-header\"><h4 class=\"modal-title\">"+row.Title+"</h4>";
+  result += "<button type=\"button\" class=\"close\" data-dismiss=\"modal\"></button></div><div class=\"modal-body\"><br><img src="+row.IMGURL+" width='300' height='300'>";
+  result += "</br>"+row.Author+"<br/>"+row.Location+"<br/>"+row.Technique+"<br/>"+row.Form+"<br/>"+row.Type+"<br/>"+row.School+"<br/>"+row.Timeframe+"<br/>"+"<a style='color:blue;' href="+row.URL+">Art Page Link</a><br/>";
+  result += "<div id=\"Like"+i+"\"></div><div id='loading' style=display:none;></div></br>";
+  getLike(row.ID,i);
+  result += "<button onclick=\"addLike("+row.ID+")\">Like</button>";
+  result += "<div id=\"myComment"+i+"\"></div><div id='loading' style=display:none;></div>";
+  getComments(row.ID,i);
+  result += "<input type=\"text\" id=\"userComment\" class=\"form-control\" placeholder=\"Add Comment\"><button onclick=\"addComment("+row.ID+")\">Comment</button>";
+  result += "<div id=\"postpage\"></div></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button></div></div></div></div>";
+  return result;
+
+}
+
+function getLike(xid,i) {
+  $.ajax({
+      url: Url+'/getLike?ID='+xid,
+      type:"GET",
+      index:i,
+      success: function (result){
+        processLike(result,this.index)
+      },
+      error: displayError
+  })
+}
+
+function processLike(results,i) {
+  rows=JSON.parse(results);
+  if (rows.length < 1) {
+    return "<h3>Nothing Found</h3>";
+  } else {
+    var results = '';
+    var j=0;
+    rows.forEach(function(row) {
+        results += "Likes" + ": "+ row.NumLike + "<br>";
+        j++;
+    })
+  }
+  console.log(results);
+  $('#Like'+i).append(results);
+}
+
+function addLike(artID){
+
+  var stringUserID = UserID;
+  $.ajax({
+      url: Url+'/addLike?RatingUserID='+stringUserID+'&RatingArtID='+artID,
+      type:"GET",
+      success: processAddLike,
+      error: displayError
+})
+}
+function processAddLike() {
+    console.log("Like = Success");
+    location.replace(window.location.href)
+
+}
+
+
+
+function getComments(id,i){
+
+  $.ajax({
+      url: Url+'/listComments?ID='+id,
+      type:"GET",
+      index:i,
+      success: function (result){
+        processComment(result,this.index)
+      },
+      error: displayError
+  })
+}
+
+
+
+function processComment(results,i){
+    rows=JSON.parse(results);
+    if (rows.length < 1) {
+	    return "<h3>Nothing Found</h3>";
+    } else {
+      var results = '';
+    	var j=0;
+    	rows.forEach(function(row) {
+          results += row.Username + ": "+ row.Comment + "<br>";
+          j++;
+    	})
+    }
+    console.log(results);
+    $('#myComment'+i).append(results);
+}
 
 
 
@@ -122,9 +235,7 @@ function buildTable(data) {
 
 
 
-//<button onclick=\"hideTable()\">Hide Table</button>
-//<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Open modal</button>
-//
+
 function buildPostPage(artRow) {
 	var result;
   result += 1;
@@ -150,12 +261,16 @@ function showInfo(myButton) {
 }
 
 function showPostModal(myPost) {
-  var x = document.getElementById(myPost);
-  if (x.style.display === "none") {
-    x.style.display = "block";
-  } else {
-    x.style.display = "none";
-  }
+  // var x = document.getElementById(myPost);
+  // console.log(myPost);
+  // console.log(x);
+  if (myPost.style.display === "none") {
+    myPost.style.display = "block";
+    myPost.style.display = "none";
+  }else {
+  myPost.style.display = "none";
+
+}
 }
 
 // Called when the user clicks on the Edit button on the results list from a search
@@ -206,7 +321,11 @@ function addEntry(){
         error: displayError
     })
 }
+function processRandomPic(results){
 
+  $('#randomPic').append("<img src="+results+" width='300' height='300'>");
+
+}
 // This is called when the user clicks on a "Delete" button on a row matches from a search.
 // It puts up a modal asking the user to confirm if they really want to delete this record.  If they
 // hit "Delete record", the processDelete function is called to do the delete.
@@ -242,6 +361,24 @@ function clearResults() {
 }
 
 
+function addComment(artID){
+    console.log("Add:"+$('#userComment').val());
+    saveRecord=$('#userComment').val();
+    var stringUserID = UserID;
+    $.ajax({
+        url: Url+'/addComment?UserID='+stringUserID+'&Comment='+saveRecord+'&ArtID='+artID,
+        type:"GET",
+        success: processAddComment,
+        error: displayError
+  })
+}
+
+
+function processAddComment(results) {
+    // Look up the record and display it
+    console.log("Add success:"+saveRecord);
+
+}
 // function authenticate() {
 //   var password = document.getElementById('loginpassword').value;
 //   var username = document.getElementById('loginusername').value;
@@ -264,6 +401,19 @@ function login(results) {
       url: Url+'/auth?Username='+$('#loginusername').val()+'&Password='+$('#loginpassword').val(),
       type:"GET",
       success: processLogin,
+      error: displayError
+  })
+
+}
+
+
+
+
+function randomPicture(){
+  $.ajax({
+      url: Url+'/picture?',
+      type:"GET",
+      success: processRandomPic,
       error: displayError
   })
 
@@ -310,3 +460,16 @@ function getMatches(){
     })
 
 }
+
+var getParams = function (url) {
+  var params = {};
+  var parser = document.createElement('a');
+  parser.href = url;
+  var query = parser.search.substring(1);
+  var vars = query.split('&');
+  for (var i = 0; i < vars.length; i++) {
+    var pair = vars[i].split('=');
+    params[pair[0]] = decodeURIComponent(pair[1]);
+  }
+  return params;
+};
