@@ -10,7 +10,7 @@ var saveRecord; // Place to store record for add varification
 var loggedIn = false;
 var UserID;
 var LikeStatus = false;
-
+var randomPicID ="";
 // Set up events when page is ready
 $(document).ready(function () {
 
@@ -27,6 +27,7 @@ $(document).ready(function () {
 
     operation = "Author"; // Default operation
     randomPicture();
+    $("#randomPicComment").click(addCommentRandPic());
     // Clear everything on startup
     $('.editdata').hide();
     $("#search-btn").click(getMatches).click(checkUID);  // Search button click
@@ -322,8 +323,21 @@ function addEntry(){
     })
 }
 function processRandomPic(results){
-
-  $('#randomPic').append("<img src="+results+" width='300' height='300'>");
+  console.log(results);
+  rows=JSON.parse(results);
+  if (rows.length < 1) {
+    return "<h3>Nothing Found</h3>";
+  } else {
+    var results = '';
+    var j=0;
+    rows.forEach(function(row) {
+        results += row.IMGURL;
+        randomPicID += row.ID;
+        j++;
+    })
+  }
+  console.log(randomPicID);
+  $('#randomPic').append("<img src="+results+" width='60%' height='60%'>");
 
 }
 // This is called when the user clicks on a "Delete" button on a row matches from a search.
@@ -372,7 +386,18 @@ function addComment(artID){
         error: displayError
   })
 }
-
+function addCommentRandPic(){
+    console.log("this is"+randomPicID);
+    console.log("Add:"+$('#RandPicComment').val());
+    saveRecord=$('#RandPicComment').val();
+    var stringUserID = UserID;
+    $.ajax({
+        url: Url+'/addComment?UserID='+stringUserID+'&Comment='+saveRecord+'&ArtID='+randomPicID,
+        type:"GET",
+        success: processAddComment,
+        error: displayError
+  })
+}
 
 function processAddComment(results) {
     // Look up the record and display it
@@ -410,6 +435,7 @@ function login(results) {
 
 
 function randomPicture(){
+
   $.ajax({
       url: Url+'/picture?',
       type:"GET",

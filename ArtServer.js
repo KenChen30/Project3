@@ -155,10 +155,29 @@ app.get('/addLike', function (req, res) {
  	console.log(query);
 	con.query(query, function(err,result,fields) {
 	    if (err) throw err;
-	    console.log(result)
+	    console.log(result);
 	    res.end(JSON.stringify(result));
 	})
 })
+
+app.get('/picture',function(req, res) {
+  var picYear = new Date().getFullYear();
+  var picMonth = new Date().getMonth() + 1;
+  var picDay = new Date().getDate();
+  var picNum = 49567;
+  var picConst = 1123;
+  var picRan = picMonth*1000000 + picDay*10000 + picYear;
+  var picIndex = ((1+picRan)%picNum)+1;
+  //((picNum*picRan)%picConst)*picNum/picConst
+
+  query = "SELECT IMGURL,ID FROM art where ID = "+ picIndex;
+  con.query(query, function(err,result,fields) {
+     if (err) throw err;
+     console.log(result);
+     res.end( JSON.stringify(result));
+  })
+
+} )
 
 
 app.get('/:id', function (req, res) {
@@ -203,22 +222,6 @@ app.post('/auth', function(req, res) {
 });
 
 
-app.get('/picture',function(req, res) {
-  var picYear = new Date().getFullYear();
-  var picMonth = new Date().getMonth() + 1;
-  var picDay = new Date().getDate();
-  var picNum = 49567;
-  var picConst = 1123;
-  var picRan = picMonth*10000 + picDay*1000 + picYear;
-  var picIndex = ((picNum*picRan)%picConst)*picNum/picConst;
-  query = "SELECT IMGURL FROM art where id = "+ picIndex;
-  con.query(query, function(err,result,fields) {
-     if (err) throw err;
-     console.log(result)
-     res.end( JSON.stringify(result));
-  })
-
-} )
 
 
 
