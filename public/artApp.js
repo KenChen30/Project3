@@ -10,7 +10,7 @@ var saveRecord; // Place to store record for add varification
 var loggedIn = false;
 var UserID;
 var LikeStatus = false;
-var randomPicID='';
+
 // Set up events when page is ready
 $(document).ready(function () {
 
@@ -34,8 +34,8 @@ $(document).ready(function () {
     });
     $("#add-btn").click(addEntry);
     $("#clear").click(clearResults);
-    randomPicture();
-    console.log(randomPicID);
+    var randomID=randomPicture();
+    console.log("this is randomID"+randomID);
     $("#randomPicComment").click(addCommentRandPic);
     // $("#login-btn").click(login);
     // $("#login-btn").click(setCookie);
@@ -337,22 +337,14 @@ function addEntry(){
     })
 }
 function processRandomPic(results){
-  console.log(results);
+
   rows=JSON.parse(results);
 
-  if (rows.length < 1) {
-    return "<h3>Nothing Found</h3>";
-  } else {
-    var results = '';
-    var j=0;
-    rows.forEach(function(row) {
-        results += row.IMGURL;
-        window[randomPicID] += row.ID;
-        j++;
-    })
-  }
-
-  $('#randomPic').append("<img src="+results+" width='60%' height='60%'>");
+  imgURL = rows[0].IMGURL;
+  randomPicID = rows[0].ID;
+  console.log("This is randomID"+randomPicID);
+  $('#randomPic').append("<img src="+imgURL+" width='60%' height='60%'>");
+  return randomPicID;
 
 }
 // This is called when the user clicks on a "Delete" button on a row matches from a search.
@@ -454,15 +446,16 @@ function login(results) {
 
 
 function randomPicture(){
-
+  var randomPicID="";
   $.ajax({
       url: Url+'/picture?',
       type:"GET",
       success: processRandomPic,
       error: displayError
   })
-
+  console.log(randomPicID);
 }
+
 
 function processLogin(results) {
     // Logged in and tell them their logged in
