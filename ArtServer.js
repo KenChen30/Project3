@@ -151,7 +151,7 @@ app.get('/getLike', function (req, res) {
 })
 
 app.get('/addLike', function (req, res) {
-	query = "Insert INTO RatingTable(RatingUserID,RatingArtID,RatingLike)  VALUES('"+req.query.RatingUserID+"','"+req.query.RatingArtID+"','T')";
+	query = "Insert INTO RatingTable(RatingUserID,RatingArtID,RatingLike)  VALUES('"+req.query.RatingUserID+"','"+req.query.RatingArtID+"','T') ON DUPLICATE KEY UPDATE RatingLike = 'F'";
  	console.log(query);
 	con.query(query, function(err,result,fields) {
 	    if (err) throw err;
@@ -204,7 +204,14 @@ app.post('/auth', function(req, res) {
 
 
 app.get('/picture',function(req, res) {
-  query = "SELECT IMGURL FROM art ORDER BY RAND() LIMIT 1";
+  var picYear = new Date().getFullYear();
+  var picMonth = new Date().getMonth() + 1;
+  var picDay = new Date().getDate();
+  var picNum = 49567;
+  var picConst = 1123;
+  var picRan = picMonth*10000 + picDay*1000 + picYear;
+  var picIndex = ((picNum*picRan)%picConst)*picNum/picConst;
+  query = "SELECT IMGURL FROM art where id = "+ picIndex;
   con.query(query, function(err,result,fields) {
      if (err) throw err;
      console.log(result)

@@ -26,7 +26,7 @@ $(document).ready(function () {
     // For this program is will be a reponse to a request from this page for an action
 
     operation = "Author"; // Default operation
-
+    randomPicture();
     // Clear everything on startup
     $('.editdata').hide();
     $("#search-btn").click(getMatches).click(checkUID);  // Search button click
