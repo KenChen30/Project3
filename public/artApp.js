@@ -10,7 +10,7 @@ var saveRecord; // Place to store record for add varification
 var loggedIn = false;
 var UserID;
 var LikeStatus = false;
-var randomPicID ="";
+
 // Set up events when page is ready
 $(document).ready(function () {
 
@@ -26,10 +26,7 @@ $(document).ready(function () {
     // For this program is will be a reponse to a request from this page for an action
 
     operation = "Author"; // Default operation
-    randomPicture();
-    $("#randomPicComment").click(addCommentRandPic());
-    // Clear everything on startup
-    $('.editdata').hide();
+
     $("#search-btn").click(getMatches).click(checkUID);  // Search button click
     // do a search on every keystroke.
     $("#search").keyup(function(e){
@@ -37,6 +34,9 @@ $(document).ready(function () {
     });
     $("#add-btn").click(addEntry);
     $("#clear").click(clearResults);
+    var randomID=randomPicture();
+    console.log("this is randomID"+randomID);
+    $("#randomPicComment").click(addCommentRandPic);
     // $("#login-btn").click(login);
     // $("#login-btn").click(setCookie);
     //Handle pulldown menu
@@ -44,12 +44,26 @@ $(document).ready(function () {
 	$(this).parents(".btn-group").find('.selection').text($(this).text());
 	operation=$(this).text().split(" ").pop();  // Get last word (Last, First, Type, New)
 	//console.log("pick!"+operation);
+
 	changeOperation(operation);
     });
 
     $('.completeDelete').click(processDelete);
 
 });
+
+//
+// function randomPicID(ranId){
+//   var picYear = new Date().getFullYear();
+//   var picMonth = new Date().getMonth() + 1;
+//   var picDay = new Date().getDate();
+//   var picNum = 49567;
+//   var picConst = 1123;
+//   var picRan = picMonth*1000000 + picDay*10000 + picYear;
+//   var picIndex = ((1+picRan)%picNum)+1;
+//   ranId=picIndex;
+//   return ranId;
+// }
 
 function checkUID() {
   var checkID = UserID;
@@ -323,21 +337,14 @@ function addEntry(){
     })
 }
 function processRandomPic(results){
-  console.log(results);
+
   rows=JSON.parse(results);
-  if (rows.length < 1) {
-    return "<h3>Nothing Found</h3>";
-  } else {
-    var results = '';
-    var j=0;
-    rows.forEach(function(row) {
-        results += row.IMGURL;
-        randomPicID += row.ID;
-        j++;
-    })
-  }
-  console.log(randomPicID);
-  $('#randomPic').append("<img src="+results+" width='60%' height='60%'>");
+
+  imgURL = rows[0].IMGURL;
+  randomPicID = rows[0].ID;
+  console.log("This is randomID"+randomPicID);
+  $('#randomPic').append("<img src="+imgURL+" width='60%' height='60%'>");
+  return randomPicID;
 
 }
 // This is called when the user clicks on a "Delete" button on a row matches from a search.
@@ -386,13 +393,17 @@ function addComment(artID){
         error: displayError
   })
 }
+
+
 function addCommentRandPic(){
-    console.log("this is"+randomPicID);
+
     console.log("Add:"+$('#RandPicComment').val());
+    var commentRanID="";
+    commentRanID=randomPicID(commentRanID);
     saveRecord=$('#RandPicComment').val();
     var stringUserID = UserID;
     $.ajax({
-        url: Url+'/addComment?UserID='+stringUserID+'&Comment='+saveRecord+'&ArtID='+randomPicID,
+        url: Url+'/addComment?UserID='+stringUserID+'&Comment='+saveRecord+'&ArtID='+commentRanID,
         type:"GET",
         success: processAddComment,
         error: displayError
@@ -435,15 +446,16 @@ function login(results) {
 
 
 function randomPicture(){
-
+  var randomPicID="";
   $.ajax({
       url: Url+'/picture?',
       type:"GET",
       success: processRandomPic,
       error: displayError
   })
-
+  console.log(randomPicID);
 }
+
 
 function processLogin(results) {
     // Logged in and tell them their logged in
