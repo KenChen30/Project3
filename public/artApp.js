@@ -9,7 +9,6 @@ var rows;
 var saveRecord; // Place to store record for add varification
 var loggedIn = false;
 var UserID;
-var LikeStatus = false;
 
 // Set up events when page is ready
 $(document).ready(function () {
@@ -30,7 +29,7 @@ $(document).ready(function () {
     $("#search-btn").click(getMatches).click(checkUID);  // Search button click
     // do a search on every keystroke.
     $("#search").keyup(function(e){
-	getMatches();
+	  getMatches();
     });
     $("#add-btn").click(addEntry);
     $("#clear").click(clearResults);
@@ -81,7 +80,13 @@ function processResults(results) {
     $('#addmessage').empty();
     //console.log("Results:"+results);
     $('#searchresults').empty();
-    $('#searchresults').append(buildTable(results));
+    rows=JSON.parse(results);
+    if (rows[0].Author === undefined) {
+      $('#searchresults').append(buildUserTable(results));
+    }
+    else {
+      $('#searchresults').append(buildTable(results));
+    }
 
 }
 
@@ -133,11 +138,9 @@ function buildTable(data) {
     if (rows.length < 1) {
 	return "<h3>Nothing Found</h3>";
     } else {
-	var result = '<table class="w3-table-all w3-hoverable" border="2"><tr><th>Author</th><th>Title</th><th>Date</th><th>Image</th><th>Hide</th><tr>';
+	var result = '<table class="w3-table-all w3-hoverable" border="2"><tr><th>Author</th><th>Title</th><th>Date</th><th>Image</th><th>Hide</th></tr>';
 	var i=0;
 	rows.forEach(function(row) {
-
-
       result+=makeModal(row,i);
       i++;
 	})
@@ -147,6 +150,22 @@ function buildTable(data) {
     }
 }
 
+function buildUserTable(data) {
+  rows=JSON.parse(data);
+  if (rows.length < 1) {
+    return "<h3>Nothing Found</h3>";
+  } else {
+    var result = '<table class="w3-table-all w3-hoverable" border="2"><tr><th>User Name</th><th>Bio</th></tr>';
+    var i=0;
+    rows.forEach(function(row) {
+      result+="<tr><td class='username'>"+row.Username+"</td><td class='bio'>"+row.Bio+"</td></tr>";
+      i++;
+})
+result += "</table>";
+
+return result;
+  }
+}
 
 function makeModal(row,i){
   var result = "<tr><td class='author'>"+row.Author+"</td><td class='title'>"+row.Title+"</td><td class='date'>"+row.Date+"</td><td><button onclick=\"showInfo('myButton"+i+"')\">Show Image</button><div id=\"myButton"+i+"\" style=\"display:none;\"><img src="+row.IMGURL+" width='300' height='300'></div></td><td><button onclick=\"showPostModal(myPost"+i+")\" data-toggle=\"modal\" data-target=\"#myPost"+i+"\">Open Art Page</button></td>";
@@ -182,15 +201,11 @@ function processLike(results,i) {
   if (rows.length < 1) {
     return "<h3>Nothing Found</h3>";
   } else {
-    var results = '';
-    var j=0;
-    rows.forEach(function(row) {
-        results += "Likes" + ": "+ row.NumLike + "<br>";
-        j++;
-    })
+    var likeResult = '';
+    likeResult = "Likes" + ": "+ rows[0].NumLike;
   }
-  console.log(results);
-  $('#Like'+i).append(results);
+  console.log(likeResult);
+  $('#Like'+i).append(likeResult);
 }
 
 function addLike(artID){
@@ -205,7 +220,8 @@ function addLike(artID){
 }
 function processAddLike() {
     console.log("Like = Success");
-    location.replace(window.location.href)
+    location.replace(window.location.href);
+    alert("Artpiece liked");
 
 }
 
@@ -413,6 +429,8 @@ function addCommentRandPic(){
 function processAddComment(results) {
     // Look up the record and display it
     console.log("Add success:"+saveRecord);
+    location.replace(window.location.href);
+    alert("Comment Added");
 
 }
 // function authenticate() {
