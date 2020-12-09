@@ -9,6 +9,7 @@ var rows;
 var saveRecord; // Place to store record for add varification
 var loggedIn = false;
 var UserID;
+var randomPicID;
 
 // Set up events when page is ready
 $(document).ready(function () {
@@ -33,8 +34,8 @@ $(document).ready(function () {
     });
     $("#add-btn").click(addEntry);
     $("#clear").click(clearResults);
-    var randomID=randomPicture();
-    console.log("this is randomID"+randomID);
+    randomPicture();
+    console.log("this is randomID"+randomPicID);
     $("#randomPicComment").click(addCommentRandPic);
     // $("#login-btn").click(login);
     // $("#login-btn").click(setCookie);
@@ -178,7 +179,7 @@ function makeModal(row,i){
   result += "<button onclick=\"addLike("+row.ID+")\">Like</button>";
   result += "<div id=\"myComment"+i+"\"></div><div id='loading' style=display:none;></div>";
   getComments(row.ID,i);
-  result += "<input type=\"text\" id=\"userComment\" class=\"form-control\" placeholder=\"Add Comment\"><button onclick=\"addComment("+row.ID+")\">Comment</button>";
+  result += "<input type=\"text\" id=\"userComment"+i+"\" class=\"form-control\" placeholder=\"Add Comment\"><button onclick=\"addComment("+row.ID+")\">Comment</button>";
   result += "<div id=\"postpage\"></div></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button></div></div></div></div>";
   return result;
 
@@ -204,8 +205,8 @@ function processLike(results,i) {
     var likeResult = '';
     likeResult = "Likes" + ": "+ rows[0].NumLike;
   }
-  console.log(likeResult);
-  $('#Like'+i).append(likeResult);
+  console.log("This is the likeResult in the processLike "+likeResult);
+  $('#Like'+i).text(likeResult);
 }
 
 function addLike(artID){
@@ -250,12 +251,12 @@ function processComment(results,i){
       var results = '';
     	var j=0;
     	rows.forEach(function(row) {
-          results += row.Username + ": "+ row.Comment + "<br>";
+          results += row.Username + ": "+ row.Comment + "<br/>";
           j++;
     	})
     }
     console.log(results);
-    $('#myComment'+i).append(results);
+    $('#myComment'+i).html(results);
 }
 
 
@@ -360,7 +361,6 @@ function processRandomPic(results){
   randomPicID = rows[0].ID;
   console.log("This is randomID"+randomPicID);
   $('#randomPic').append("<img src="+imgURL+" width='60%' height='60%'>");
-  return randomPicID;
 
 }
 // This is called when the user clicks on a "Delete" button on a row matches from a search.
@@ -414,12 +414,11 @@ function addComment(artID){
 function addCommentRandPic(){
 
     console.log("Add:"+$('#RandPicComment').val());
-    var commentRanID="";
-    commentRanID=randomPicID(commentRanID);
     saveRecord=$('#RandPicComment').val();
     var stringUserID = UserID;
+    console.log("This is the pic id right before add comment"+randomPicID);
     $.ajax({
-        url: Url+'/addComment?UserID='+stringUserID+'&Comment='+saveRecord+'&ArtID='+commentRanID,
+        url: Url+'/addComment?UserID='+stringUserID+'&Comment='+saveRecord+'&ArtID='+randomPicID,
         type:"GET",
         success: processAddComment,
         error: displayError

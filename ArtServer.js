@@ -165,7 +165,6 @@ app.get('/picture',function(req, res) {
   var picMonth = new Date().getMonth() + 1;
   var picDay = new Date().getDate();
   var picNum = 49567;
-  var picConst = 1123;
   var picRan = picMonth*1000000 + picDay*10000 + picYear;
   var picIndex = ((1+picRan)%picNum)+1;
   //((picNum*picRan)%picConst)*picNum/picConst
