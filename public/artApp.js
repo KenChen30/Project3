@@ -36,6 +36,8 @@ $(document).ready(function () {
     $("#clear").click(clearResults);
     randomPicture();
     console.log("this is randomID"+randomPicID);
+    // getRandomLike();
+    $("#randomPicLike").click(addLikeRandPic);
     $("#randomPicComment").click(addCommentRandPic);
     // $("#login-btn").click(login);
     // $("#login-btn").click(setCookie);
@@ -209,6 +211,28 @@ function processLike(results,i) {
   $('#Like'+i).text(likeResult);
 }
 
+function getRandomLike() {
+  console.log("This is the id in getRandomlike: "+randomPicID);
+  $.ajax({
+      url: Url+'/getLike?ID='+randomPicID,
+      type:"GET",
+      success:processRandomLike,
+      error: displayError
+  })
+}
+
+function processRandomLike(results) {
+  rows=JSON.parse(results);
+  if (rows.length < 1) {
+    return "<h3>Nothing Found</h3>";
+  } else {
+    var likeResult = '';
+    likeResult = "Likes" + ": "+ rows[0].NumLike;
+  }
+  console.log("This is the likeResult in the processLike "+likeResult);
+  $('randomPicShowLike').text(likeResult);
+}
+
 function addLike(artID){
 
   var stringUserID = UserID;
@@ -226,7 +250,16 @@ function processAddLike() {
 
 }
 
-
+function addLikeRandPic(){
+    var stringUserID = UserID;
+    console.log("This is the pic id right before add Like "+randomPicID);
+    $.ajax({
+        url: Url+'/addLike?RatingUserID='+stringUserID+'&RatingArtID='+randomPicID,
+        type:"GET",
+        success: processAddLike,
+        error: displayError
+  })
+}
 
 function getComments(id,i){
 
@@ -353,10 +386,9 @@ function addEntry(){
         error: displayError
     })
 }
+
 function processRandomPic(results){
-
   rows=JSON.parse(results);
-
   imgURL = rows[0].IMGURL;
   randomPicID = rows[0].ID;
   console.log("This is randomID"+randomPicID);
@@ -396,7 +428,6 @@ function displayError(error) {
 function clearResults() {
     $('#searchresults').empty();
 }
-
 
 function addComment(artID){
     console.log("Add:"+$('#userComment').val());
