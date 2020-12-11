@@ -35,8 +35,7 @@ $(document).ready(function () {
     $("#add-btn").click(addEntry);
     $("#clear").click(clearResults);
     randomPicture();
-    console.log("this is randomID"+randomPicID);
-    // getRandomLike();
+    // console.log("this is randomID"+randomPicID);
     $("#randomPicLike").click(addLikeRandPic);
     $("#randomPicComment").click(addCommentRandPic);
     // $("#login-btn").click(login);
@@ -171,7 +170,7 @@ return result;
 }
 
 function makeModal(row,i){
-  var result = "<tr><td class='author'>"+row.Author+"</td><td class='title'>"+row.Title+"</td><td class='date'>"+row.Date+"</td><td><button onclick=\"showInfo('myButton"+i+"')\">Show Image</button><div id=\"myButton"+i+"\" style=\"display:none;\"><img src="+row.IMGURL+" width='300' height='300'></div></td><td><button onclick=\"showPostModal(myPost"+i+")\" data-toggle=\"modal\" data-target=\"#myPost"+i+"\">Open Art Page</button></td>";
+  var result = "<tr><td class='author'>"+row.Author+"</td><td class='title'>"+row.Title+"</td><td class='date'>"+row.Date+"</td><td><img src="+row.IMGURL+" class=\"img-thumbnail\" width='20%' height='20%'></td><td><button onclick=\"showPostModal(myPost"+i+")\" data-toggle=\"modal\" data-target=\"#myPost"+i+"\">Open Art Page</button></td>";
   result += "<div class=\"modal\" id=\"myPost"+i+"\" style=\"display:none;\"><div class=\"modal-dialog modal-lg\">";
   result += "<div class=\"modal-content\"><div class=\"modal-header\"><h4 class=\"modal-title\">"+row.Title+"</h4>";
   result += "<button type=\"button\" class=\"close\" data-dismiss=\"modal\"></button></div><div class=\"modal-body\"><br><img src="+row.IMGURL+" width='300' height='300'>";
@@ -211,6 +210,28 @@ function processLike(results,i) {
   $('#Like'+i).text(likeResult);
 }
 
+function randomPicture(){
+  var randomPicID="";
+  $.ajax({
+      url: Url+'/picture?',
+      type:"GET",
+      success: processRandomPic,
+      error: displayError
+  })
+  console.log("This is the randomPicID in randomPicture function: "+randomPicID);
+}
+
+function processRandomPic(results){
+  rows=JSON.parse(results);
+  imgURL = rows[0].IMGURL;
+  randomPicID = rows[0].ID;
+  getRandomLike();
+  getRandomComment();
+  console.log("This is randomID"+randomPicID);
+  $('#randomPic').append("<img src="+imgURL+" width='60%' height='60%'>");
+
+}
+
 function getRandomLike() {
   console.log("This is the id in getRandomlike: "+randomPicID);
   $.ajax({
@@ -229,8 +250,8 @@ function processRandomLike(results) {
     var likeResult = '';
     likeResult = "Likes" + ": "+ rows[0].NumLike;
   }
-  console.log("This is the likeResult in the processLike "+likeResult);
-  $('randomPicShowLike').text(likeResult);
+  console.log("This is the likeResult in the processRandomLike "+likeResult);
+  $('#randomPicShowLike').text(likeResult);
 }
 
 function addLike(artID){
@@ -260,6 +281,35 @@ function addLikeRandPic(){
         error: displayError
   })
 }
+
+function getRandomComment(){
+
+  $.ajax({
+      url: Url+'/listComments?ID='+randomPicID,
+      type:"GET",
+      success:processRandomComment,
+      error: displayError
+  })
+}
+
+
+
+function processRandomComment(results){
+    rows=JSON.parse(results);
+    if (rows.length < 1) {
+	    return "<h3>Nothing Found</h3>";
+    } else {
+      var results = '';
+    	var j=0;
+    	rows.forEach(function(row) {
+          results += row.Username + ": "+ row.Comment + "<br/>";
+          j++;
+    	})
+    }
+    console.log(results);
+    $('#randomPicShowComment').html(results);
+}
+
 
 function getComments(id,i){
 
@@ -291,14 +341,6 @@ function processComment(results,i){
     console.log(results);
     $('#myComment'+i).html(results);
 }
-
-
-
-
-
-
-
-
 
 
 function buildPostPage(artRow) {
@@ -387,14 +429,6 @@ function addEntry(){
     })
 }
 
-function processRandomPic(results){
-  rows=JSON.parse(results);
-  imgURL = rows[0].IMGURL;
-  randomPicID = rows[0].ID;
-  console.log("This is randomID"+randomPicID);
-  $('#randomPic').append("<img src="+imgURL+" width='60%' height='60%'>");
-
-}
 // This is called when the user clicks on a "Delete" button on a row matches from a search.
 // It puts up a modal asking the user to confirm if they really want to delete this record.  If they
 // hit "Delete record", the processDelete function is called to do the delete.
@@ -488,20 +522,6 @@ function login(results) {
       error: displayError
   })
 
-}
-
-
-
-
-function randomPicture(){
-  var randomPicID="";
-  $.ajax({
-      url: Url+'/picture?',
-      type:"GET",
-      success: processRandomPic,
-      error: displayError
-  })
-  console.log(randomPicID);
 }
 
 
