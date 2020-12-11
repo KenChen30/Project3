@@ -83,7 +83,7 @@ app.get('/find', function (req, res) {
     	field=req.query.field;
     	search=req.query.search;
     	console.log(field+":"+search);
-      query = "SELECT * FROM art WHERE "+field+" like '%"+req.query.search+"%' limit 3";
+      query = "SELECT * FROM art WHERE "+field+" like '%"+req.query.search+"%' limit 15";
 	    console.log(query);
 	    con.query(query, function(err,result,fields) {
 	    if (err) throw err;
@@ -95,7 +95,7 @@ app.get('/find', function (req, res) {
       field=req.query.field;
     	search=req.query.search;
     	console.log(field+":"+search);
-      query = "SELECT Username, Bio FROM UserInformation WHERE "+field+" like '%"+req.query.search+"%' limit 3";
+      query = "SELECT Username, Bio FROM UserInformation WHERE "+field+" like '%"+req.query.search+"%' limit 15";
 	    console.log(query);
 	    con.query(query, function(err,result,fields) {
 	    if (err) throw err;
