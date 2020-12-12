@@ -11,7 +11,7 @@
     <!-- Bootstrap core CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-
+    <link rel="stylesheet" href="artAppMain.css">
 
     <!-- Custom styles for this template -->
   </head>
@@ -40,6 +40,7 @@
 	      <ul class="dropdown-menu" role="menu">
 		<li><a href="#">Find Author</a></li>
 		<li><a href="#">Find Date</a></li>
+    <li><a href="#">Find Username</a></li>
 	      </ul>
 	    </li>
 	  </ul>
@@ -67,13 +68,18 @@
 
     <div class="jumbotron">
       <div class="container results">
-        <input type='button' onClick='javascript:showTable();' value='Show'>
-        <input type='button' onClick='javascript:hideTable();' value='Hide'>
+        <input type='button' onClick='javascript:showTable();' value='Show Search Results'>
+        <input type='button' onClick='javascript:hideTable();' value='Hide Search Results'>
         <div id=randomPic></div>
         <div id="loading" style="display:none;"></div>
-	      <div id="searchresults"></div>
-        <div id="loading" style="display:none;"></div>
+        <div id="randomPicShowLike"></div>
+        <div id='loading' style=display:none;></div>
+        <button id="randomPicLike">Like</button><br/>
+        <div id="randomPicShowComment"></div>
+        <div id='loading' style=display:none;></div>
         <input type="text" id="RandPicComment" class="form-control" placeholder="Add Comment"><button id= "randomPicComment">Comment</button>
+        <div id="searchresults"></div>
+        <div id="loading" style="display:none;"></div>
       </div>
 
 <!-- For the thing above =, make on of them button2 -->

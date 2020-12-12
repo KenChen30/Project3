@@ -1,2 +1,6 @@
 
 tr:hover {background-color: #00FF7F}
+
+body {
+  background-image: url("BG.jpg");
+}

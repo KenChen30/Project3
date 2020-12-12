@@ -79,31 +79,31 @@ app.get('/find', function (req, res) {
     if (req.query.field === undefined || req.query.search === undefined) {
     	console.log("Missing query value!");
     	res.end('[]');
-    } else {
+    } else if (req.query.field === "Author" || req.query.field === "Date"){
     	field=req.query.field;
     	search=req.query.search;
     	console.log(field+":"+search);
-
-	query = "SELECT * FROM art WHERE "+field+" like '%"+req.query.search+"%' limit 20";
-	console.log(query);
-	con.query(query, function(err,result,fields) {
+      query = "SELECT * FROM art WHERE "+field+" like '%"+req.query.search+"%' limit 15";
+	    console.log(query);
+	    con.query(query, function(err,result,fields) {
 	    if (err) throw err;
 	    console.log(result)
 	    res.end( JSON.stringify(result));
-	})
+	    })
     }
+    else {
+      field=req.query.field;
+    	search=req.query.search;
+    	console.log(field+":"+search);
+      query = "SELECT Username, Bio FROM UserInformation WHERE "+field+" like '%"+req.query.search+"%' limit 15";
+	    console.log(query);
+	    con.query(query, function(err,result,fields) {
+	    if (err) throw err;
+	    console.log(result);
+	    res.end( JSON.stringify(result));
+    })
+  }
 })
-
-// app.get('/getUsernameById', function (req, res) {
-//     // find record(s) by name last
-// 	query = "SELECT ID FROM UserInformation WHERE ID = " + req.query.UserID;
-// 	console.log(query);
-// 	con.query(query, function(err,result,fields) {
-// 	    if (err) throw err;
-// 	    console.log(result);
-// 	    res.end( JSON.stringify(result));
-// 	})
-// })
 
 //Section for Comments and Ratings
 app.get('/listComments', function (req, res) {
@@ -165,7 +165,6 @@ app.get('/picture',function(req, res) {
   var picMonth = new Date().getMonth() + 1;
   var picDay = new Date().getDate();
   var picNum = 49567;
-  var picConst = 1123;
   var picRan = picMonth*1000000 + picDay*10000 + picYear;
   var picIndex = ((1+picRan)%picNum)+1;
   //((picNum*picRan)%picConst)*picNum/picConst
@@ -178,24 +177,6 @@ app.get('/picture',function(req, res) {
   })
 
 } )
-
-
-app.get('/:id', function (req, res) {
-    // Get a record by id
-    if (isNaN(req.params.id)) {
-    	console.log("Bad id lookup: "+req.params.id);
-    	res.end('[]');
-    } else {
-    	query = "SELECT * FROM UserInformation WHERE ID = "+ req.params.id;
-    	console.log(query);
-    	con.query(query, function(err,result,fields) {
-    	    if (err) throw err;
-    	    console.log(result);
-    	    res.end(JSON.stringify(result));
-	})
-    }
-})
-
 
 app.post('/auth', function(req, res) {
 	var username = req.body.username;
@@ -221,7 +202,21 @@ app.post('/auth', function(req, res) {
 	}
 });
 
-
+app.get('/:id', function (req, res) {
+    // Get a record by id
+    if (isNaN(req.params.id)) {
+    	console.log("Bad id lookup: "+req.params.id);
+    	res.end('[]');
+    } else {
+    	query = "SELECT * FROM UserInformation WHERE ID = "+ req.params.id;
+    	console.log(query);
+    	con.query(query, function(err,result,fields) {
+    	    if (err) throw err;
+    	    console.log(result);
+    	    res.end(JSON.stringify(result));
+	})
+    }
+})
 
 
 
