@@ -35,36 +35,21 @@ $(document).ready(function () {
     $("#add-btn").click(addEntry);
     $("#clear").click(clearResults);
     randomPicture();
-    // console.log("this is randomID"+randomPicID);
+
     $("#randomPicLike").click(addLikeRandPic);
     $("#randomPicComment").click(addCommentRandPic);
-    // $("#login-btn").click(login);
-    // $("#login-btn").click(setCookie);
-    //Handle pulldown menu
+
     $(".dropdown-menu li a").click(function(){
 	$(this).parents(".btn-group").find('.selection').text($(this).text());
 	operation=$(this).text().split(" ").pop();  // Get last word (Last, First, Type, New)
-	//console.log("pick!"+operation);
+
 
 	changeOperation(operation);
     });
 
-    $('.completeDelete').click(processDelete);
 
 });
 
-//
-// function randomPicID(ranId){
-//   var picYear = new Date().getFullYear();
-//   var picMonth = new Date().getMonth() + 1;
-//   var picDay = new Date().getDate();
-//   var picNum = 49567;
-//   var picConst = 1123;
-//   var picRan = picMonth*1000000 + picDay*10000 + picYear;
-//   var picIndex = ((1+picRan)%picNum)+1;
-//   ranId=picIndex;
-//   return ranId;
-// }
 
 function checkUID() {
   var checkID = UserID;
@@ -92,9 +77,6 @@ function processResults(results) {
 
 }
 
-// function processPost(results) {
-//   $('#postpage').append("sth?");
-// }
 
 // This function is called when an option is selected in the pull down menu
 // If the option is "Add New" the shows the add form, and hides the others
@@ -114,27 +96,8 @@ function changeOperation(operation){
     }
 }
 
-function setCookie() {
-  document.cookie='myCookie='+value;
-}
 
-function getCookie(cname) {
-  var name = cname + "=";
-  var decodedCookie = decodeURIComponent(document.cookie);
-  var ca = decodedCookie.split(';');
-  for(var i = 0; i <ca.length; i++) {
-    var c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
-}
-
-// Build output table from comma delimited data list from the server (a list of phone entries)
+// Build output table from comma delimited data list from the server (a list of either username or art piece information taken from sql server)
 function buildTable(data) {
     rows=JSON.parse(data);
     if (rows.length < 1) {
@@ -151,7 +114,7 @@ function buildTable(data) {
 	return result;
     }
 }
-
+//builds table for the user info when searched
 function buildUserTable(data) {
   rows=JSON.parse(data);
   if (rows.length < 1) {
@@ -168,24 +131,24 @@ result += "</table>";
 return result;
   }
 }
-
+//creates modal for each art piece to display their information
 function makeModal(row,i){
   var result = "<tr><td class='author'>"+row.Author+"</td><td class='title'>"+row.Title+"</td><td class='date'>"+row.Date+"</td><td><img src="+row.IMGURL+" class=\"img-thumbnail\" width='20%' height='20%'></td><td><button onclick=\"showPostModal(myPost"+i+")\" data-toggle=\"modal\" data-target=\"#myPost"+i+"\">Open Art Page</button></td>";
   result += "<div class=\"modal\" id=\"myPost"+i+"\" style=\"display:none;\"><div class=\"modal-dialog modal-lg\">";
   result += "<div class=\"modal-content\"><div class=\"modal-header\"><h4 class=\"modal-title\">"+row.Title+"</h4>";
   result += "<button type=\"button\" class=\"close\" data-dismiss=\"modal\"></button></div><div class=\"modal-body\"><br><img src="+row.IMGURL+" width='300' height='300'>";
-  result += "</br>"+row.Author+"<br/>"+row.Location+"<br/>"+row.Technique+"<br/>"+row.Form+"<br/>"+row.Type+"<br/>"+row.School+"<br/>"+row.Timeframe+"<br/>"+"<a style='color:blue;' href="+row.URL+">Art Page Link</a><br/>";
+  result += "</br>"+row.Author+"<br/>"+row.Location+"<br/>"+row.Technique+"<br/>"+row.Form+"<br/>"+row.Type+"<br/>"+row.School+"<br/>"+row.Timeframe+"<br/>"+"<a style='color:white;' href="+row.URL+">Art Page Link</a><br/>";
   result += "<div id=\"Like"+i+"\"></div><div id='loading' style=display:none;></div></br>";
   getLike(row.ID,i);
   result += "<button onclick=\"addLike("+row.ID+")\">Like</button>";
   result += "<div id=\"myComment"+i+"\"></div><div id='loading' style=display:none;></div>";
   getComments(row.ID,i);
-  result += "<input type=\"text\" id=\"userComment"+i+"\" class=\"form-control\" placeholder=\"Add Comment\"><button onclick=\"addComment("+row.ID+")\">Comment</button>";
+  result += "<input type=\"text\" id=\"userComment"+i+"\" class=\"form-control\" placeholder=\"Add Comment\"><button onclick=\"addComment("+row.ID+","+i+")\">Comment</button>";
   result += "<div id=\"postpage\"></div></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button></div></div></div></div>";
   return result;
 
 }
-
+//shows number of likes when called to display on the modal for each artpiece
 function getLike(xid,i) {
   $.ajax({
       url: Url+'/getLike?ID='+xid,
@@ -197,7 +160,7 @@ function getLike(xid,i) {
       error: displayError
   })
 }
-
+//when like button is pressed it is called and adds changes to the sql server
 function processLike(results,i) {
   rows=JSON.parse(results);
   if (rows.length < 1) {
@@ -209,7 +172,7 @@ function processLike(results,i) {
   console.log("This is the likeResult in the processLike "+likeResult);
   $('#Like'+i).text(likeResult);
 }
-
+//gets and displays the random picture
 function randomPicture(){
   var randomPicID="";
   $.ajax({
@@ -220,7 +183,7 @@ function randomPicture(){
   })
   console.log("This is the randomPicID in randomPicture function: "+randomPicID);
 }
-
+//gets and displays the random picture
 function processRandomPic(results){
   rows=JSON.parse(results);
   imgURL = rows[0].IMGURL;
@@ -231,7 +194,7 @@ function processRandomPic(results){
   $('#randomPic').append("<img src="+imgURL+" width='60%' height='60%'>");
 
 }
-
+//gets the random picture's amount of likes
 function getRandomLike() {
   console.log("This is the id in getRandomlike: "+randomPicID);
   $.ajax({
@@ -241,7 +204,7 @@ function getRandomLike() {
       error: displayError
   })
 }
-
+//when the getrandomlike is a success this is called to display on the client side
 function processRandomLike(results) {
   rows=JSON.parse(results);
   if (rows.length < 1) {
@@ -253,7 +216,7 @@ function processRandomLike(results) {
   console.log("This is the likeResult in the processRandomLike "+likeResult);
   $('#randomPicShowLike').text(likeResult);
 }
-
+//adds the like whenever like button is pressed
 function addLike(artID){
 
   var stringUserID = UserID;
@@ -264,13 +227,14 @@ function addLike(artID){
       error: displayError
 })
 }
+//the client side function is this and reloads the page so user can see the difference in number of likes
 function processAddLike() {
     console.log("Like = Success");
     location.replace(window.location.href);
     alert("Artpiece liked");
 
 }
-
+//adds like on the random picture
 function addLikeRandPic(){
     var stringUserID = UserID;
     console.log("This is the pic id right before add Like "+randomPicID);
@@ -281,7 +245,7 @@ function addLikeRandPic(){
         error: displayError
   })
 }
-
+//gets the comment of the random picture to display
 function getRandomComment(){
 
   $.ajax({
@@ -293,7 +257,7 @@ function getRandomComment(){
 }
 
 
-
+//when getrandomcomment is a success this is called to display the comments for the client side
 function processRandomComment(results){
     rows=JSON.parse(results);
     if (rows.length < 1) {
@@ -310,7 +274,7 @@ function processRandomComment(results){
     $('#randomPicShowComment').html(results);
 }
 
-
+//gets all the comments based on the art id a
 function getComments(id,i){
 
   $.ajax({
@@ -325,7 +289,7 @@ function getComments(id,i){
 }
 
 
-
+//when the getcomment is success this is called to display the comment on the client side
 function processComment(results,i){
     rows=JSON.parse(results);
     if (rows.length < 1) {
@@ -342,22 +306,15 @@ function processComment(results,i){
     $('#myComment'+i).html(results);
 }
 
-
-function buildPostPage(artRow) {
-	var result;
-  result += 1;
-
-	return result;
-}
-
+//hides the table when button is clicked
 function hideTable(){
   document.getElementById('searchresults').style.visibility = "hidden";
 }
-
+//shows the table when show button is clicked
 function showTable(){
 document.getElementById('searchresults').style.visibility = "visible";
 }
-
+//function for showing the button
 function showInfo(myButton) {
   var x = document.getElementById(myButton);
   if (x.style.display === "none") {
@@ -366,7 +323,7 @@ function showInfo(myButton) {
     x.style.display = "none";
   }
 }
-
+//function for showing the modal for each art piece including all the information
 function showPostModal(myPost) {
   // var x = document.getElementById(myPost);
   // console.log(myPost);
@@ -429,31 +386,7 @@ function addEntry(){
     })
 }
 
-// This is called when the user clicks on a "Delete" button on a row matches from a search.
-// It puts up a modal asking the user to confirm if they really want to delete this record.  If they
-// hit "Delete record", the processDelete function is called to do the delete.
-
-
-// Calls the server with a recordID of a row to delete
-function processDelete(){
-    var id=$(this).attr('ID');
-    $.ajax({
-    	type: "DELETE",
-	    url: Url+'/delete?ID='+selectid,
-	    success: deleteComplete,
-    	error: displayError
-    })
-}
-
-// Process a completed delete
-function deleteComplete(results) {
-    console.log("Delete success:"+saveRecord);
-    $('.editdata').hide();
-    $('#addchangemodal').modal();
-    $('#modalMessage').text(saveRecord);
-    $('#messageTitle').text("Record deleted");
-}
-
+//displays error whenever ajax is a failure
 function displayError(error) {
     console.log('Error ${error}');
 }
@@ -462,10 +395,10 @@ function displayError(error) {
 function clearResults() {
     $('#searchresults').empty();
 }
-
-function addComment(artID){
+//adds comment for each art piece whenever users comment on the art piece
+function addComment(artID,i){
     console.log("Add:"+$('#userComment').val());
-    saveRecord=$('#userComment').val();
+    saveRecord=$('#userComment'+i).val();
     var stringUserID = UserID;
     $.ajax({
         url: Url+'/addComment?UserID='+stringUserID+'&Comment='+saveRecord+'&ArtID='+artID,
@@ -475,7 +408,7 @@ function addComment(artID){
   })
 }
 
-
+//adds comments on the random picture of the day
 function addCommentRandPic(){
 
     console.log("Add:"+$('#RandPicComment').val());
@@ -489,7 +422,7 @@ function addCommentRandPic(){
         error: displayError
   })
 }
-
+//adds comment for each art pieec on the server side.
 function processAddComment(results) {
     // Look up the record and display it
     console.log("Add success:"+saveRecord);
@@ -497,13 +430,7 @@ function processAddComment(results) {
     alert("Comment Added");
 
 }
-// function authenticate() {
-//   var password = document.getElementById('loginpassword').value;
-//   var username = document.getElementById('loginusername').value;
-//   loggedIn = login(password,username);
-//   status();
-// }
-
+//calls in the userinformation  whenever someone registers for an account
 function userInfo(){
 
   $.ajax({
@@ -513,42 +440,6 @@ function userInfo(){
       error: displayError
   })
 }
-
-function login(results) {
-  $.ajax({
-      url: Url+'/auth?Username='+$('#loginusername').val()+'&Password='+$('#loginpassword').val(),
-      type:"GET",
-      success: processLogin,
-      error: displayError
-  })
-
-}
-
-
-function processLogin(results) {
-    // Logged in and tell them their logged in
-    console.log("Login Success");
-    loggedIn===True;
-    console.log(loggedIn)
-
-}
-
-// function homepage(){
-//   $('.editdata').hide();
-//   $.ajax({
-//       url: Url+'/home?',
-//       type:"GET",
-//       success: processResults,
-//       error: displayError
-//   })
-// }
-// function status() {
-//   if(loggedIn) {
-//     console.log('You are in :)');
-//   } else {
-//     console.log('You are not in :(');
-//   }
-// }
 
 // Called when the user hits the "Search" button.
 // It sends a request to the server (operation,search string),

@@ -33,18 +33,18 @@ function openSQL() {
         });
         return con;
 }
-
+//connects ti the sql allowing res.redirect
 var con = openSQL();
 app.use(session({
 	secret: 'secret',
 	resave: true,
 	saveUninitialized: true
 }));
-
+//setting username, password, and bio variables
 function missingField(p) {
     return (p.Username === undefined || p.Password === undefined || p.Bio === undefined );
 }
-
+//adding account records to the server
 app.get('/addrec', function (req, res) {
     // update a record by id
     if (missingField(req.query)) {
@@ -62,17 +62,7 @@ app.get('/addrec', function (req, res) {
 })
 
 
-// Section for Art Search
-app.get('/list', function (req, res) {
-    // Get a list of all records
-    query = "SELECT * FROM art";
-    con.query(query, function(err,result,fields) {
-	     if (err) throw err;
-	     console.log(result)
-	     res.end( JSON.stringify(result));
-    })
-})
-
+//this function finds the art pieces based on the art id where the data is passed from the search function from artApp.js
 app.get('/find', function (req, res) {
     // find record(s) by name last
     console.log("Query:"+JSON.stringify(req.query));
@@ -83,7 +73,7 @@ app.get('/find', function (req, res) {
     	field=req.query.field;
     	search=req.query.search;
     	console.log(field+":"+search);
-      query = "SELECT * FROM art WHERE "+field+" like '%"+req.query.search+"%' limit 15";
+      query = "SELECT * FROM art WHERE "+field+" like '%"+req.query.search+"%' limit 50";
 	    console.log(query);
 	    con.query(query, function(err,result,fields) {
 	    if (err) throw err;
@@ -95,7 +85,7 @@ app.get('/find', function (req, res) {
       field=req.query.field;
     	search=req.query.search;
     	console.log(field+":"+search);
-      query = "SELECT Username, Bio FROM UserInformation WHERE "+field+" like '%"+req.query.search+"%' limit 15";
+      query = "SELECT Username, Bio FROM UserInformation WHERE "+field+" like '%"+req.query.search+"%' limit 50";
 	    console.log(query);
 	    con.query(query, function(err,result,fields) {
 	    if (err) throw err;
@@ -105,7 +95,7 @@ app.get('/find', function (req, res) {
   }
 })
 
-//Section for Comments and Ratings
+//Section for Comments and Ratings taking in all the comments givern by the user
 app.get('/listComments', function (req, res) {
     // Get a list of all records
     recid=req.query.ID;
@@ -123,7 +113,7 @@ app.get('/listComments', function (req, res) {
     })
 
 })
-
+//adds comment that is taken from the input into the sql server
 app.get('/addComment', function (req, res) {
 	query = "Insert INTO CommentTable(UserID, Comment, ArtID)  VALUES('"+req.query.UserID+"','"+req.query.Comment+"','"+req.query.ArtID+"')";
  	console.log(query);
@@ -133,7 +123,7 @@ app.get('/addComment', function (req, res) {
 	    res.end(JSON.stringify(result));
 	})
 })
-
+//takes the number of likes from the sql server to display on the webpage
 app.get('/getLike', function (req, res) {
     // Get a list of all records
     query = "SELECT count(RatingLike) as NumLike FROM RatingTable where RatingLike = 'T' and RatingArtID = " + req.query.ID;
@@ -149,7 +139,7 @@ app.get('/getLike', function (req, res) {
     })
 
 })
-
+//adds the number of likes everytime someone likes the webpage
 app.get('/addLike', function (req, res) {
 	query = "Insert INTO RatingTable(RatingUserID,RatingArtID,RatingLike)  VALUES('"+req.query.RatingUserID+"','"+req.query.RatingArtID+"','T') ON DUPLICATE KEY UPDATE RatingLike = 'F'";
  	console.log(query);
@@ -159,7 +149,7 @@ app.get('/addLike', function (req, res) {
 	    res.end(JSON.stringify(result));
 	})
 })
-
+//takes in the picture id of the art and displays it.
 app.get('/picture',function(req, res) {
   var picYear = new Date().getFullYear();
   var picMonth = new Date().getMonth() + 1;
@@ -177,7 +167,7 @@ app.get('/picture',function(req, res) {
   })
 
 } )
-
+//authentication and login function allowing users to log in with password and bio
 app.post('/auth', function(req, res) {
 	var username = req.body.username;
 	var password = req.body.password;
@@ -201,22 +191,6 @@ app.post('/auth', function(req, res) {
 		res.end();
 	}
 });
-
-app.get('/:id', function (req, res) {
-    // Get a record by id
-    if (isNaN(req.params.id)) {
-    	console.log("Bad id lookup: "+req.params.id);
-    	res.end('[]');
-    } else {
-    	query = "SELECT * FROM UserInformation WHERE ID = "+ req.params.id;
-    	console.log(query);
-    	con.query(query, function(err,result,fields) {
-    	    if (err) throw err;
-    	    console.log(result);
-    	    res.end(JSON.stringify(result));
-	})
-    }
-})
 
 
 
