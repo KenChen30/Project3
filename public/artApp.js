@@ -137,7 +137,7 @@ function makeModal(row,i){
   result += "<div class=\"modal\" id=\"myPost"+i+"\" style=\"display:none;\"><div class=\"modal-dialog modal-lg\">";
   result += "<div class=\"modal-content\"><div class=\"modal-header\"><h4 class=\"modal-title\">"+row.Title+"</h4>";
   result += "<button type=\"button\" class=\"close\" data-dismiss=\"modal\"></button></div><div class=\"modal-body\"><br><img src="+row.IMGURL+" width='300' height='300'>";
-  result += "</br>"+row.Author+"<br/>"+row.Location+"<br/>"+row.Technique+"<br/>"+row.Form+"<br/>"+row.Type+"<br/>"+row.School+"<br/>"+row.Timeframe+"<br/>"+"<a style='color:white;' href="+row.URL+">Art Page Link</a><br/>";
+  result += "</br>Author: "+row.Author+"<br/>Art Origin: "+row.Location+"<br/>Art Technique: "+row.Technique+"<br/>Art Form: "+row.Form+"<br/>Art Type: "+row.Type+"<br/>School's country type: "+row.School+"<br/>Timefram: "+row.Timeframe+"<br/>"+"<a style='color:white;' href="+row.URL+">Art Page Link</a><br/>";
   result += "<div id=\"Like"+i+"\"></div><div id='loading' style=display:none;></div></br>";
   getLike(row.ID,i);
   result += "<button onclick=\"addLike("+row.ID+")\">Like</button>";
